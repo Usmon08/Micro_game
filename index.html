@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MebelPro — Mebel Ishlab Chiqarish Tizimi</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d0f14;--surface:#13161e;--card:#1a1e28;--border:#252a38;
+  --accent:#f0a500;--accent2:#e05a00;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;
+  --text:#e8eaf0;--muted:#6b7280;--sidebar:240px;
+}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+#sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh;overflow-y:auto}
+.logo{padding:20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-text{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
+.logo-sub{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+nav{padding:12px 0;flex:1}
+.nav-section{padding:6px 16px 4px;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;border-radius:0;transition:all .15s;color:var(--muted);font-size:13px;font-weight:500;border-left:3px solid transparent;margin:1px 0}
+.nav-item:hover{background:rgba(240,165,0,.07);color:var(--text)}
+.nav-item.active{background:rgba(240,165,0,.12);color:var(--accent);border-left-color:var(--accent)}
+.nav-icon{width:18px;text-align:center;font-size:15px;flex-shrink:0}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
+
+/* MAIN */
+#main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+#topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:700;color:var(--text)}
+.topbar-badge{background:rgba(240,165,0,.15);color:var(--accent);border:1px solid rgba(240,165,0,.3);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:1px}
+#content{flex:1;overflow-y:auto;padding:24px}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title span{font-size:16px}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+/* STAT CARDS */
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat.orange::before{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.stat.green::before{background:linear-gradient(90deg,#22c55e,#16a34a)}
+.stat.blue::before{background:linear-gradient(90deg,#3b82f6,#2563eb)}
+.stat.red::before{background:linear-gradient(90deg,#ef4444,#dc2626)}
+.stat-icon{font-size:24px;margin-bottom:8px}
+.stat-val{font-size:26px;font-weight:800;color:var(--text);line-height:1}
+.stat-label{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.stat-change{font-size:11px;color:var(--green);margin-top:6px}
+
+/* FORMS */
+.form-row{display:grid;gap:10px;margin-bottom:10px}
+.form-row.cols2{grid-template-columns:1fr 1fr}
+.form-row.cols3{grid-template-columns:1fr 1fr 1fr}
+.form-row.cols4{grid-template-columns:1fr 1fr 1fr 1fr}
+label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;display:block}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Sora',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+input:focus,select:focus{border-color:var(--accent)}
+select option{background:var(--surface)}
+
+/* BUTTONS */
+.btn{border:none;border-radius:8px;padding:9px 18px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-secondary{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text)}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.btn-danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+.btn-danger:hover{background:rgba(239,68,68,.25)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-green{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:var(--green)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{border-bottom:1px solid var(--border)}
+th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600}
+.tag-green{background:rgba(34,197,94,.15);color:var(--green)}
+.tag-orange{background:rgba(240,165,0,.15);color:var(--accent)}
+.tag-red{background:rgba(239,68,68,.15);color:var(--red)}
+.tag-blue{background:rgba(59,130,246,.15);color:var(--blue)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--surface);border-radius:10px;padding:4px;width:fit-content}
+.tab{padding:7px 16px;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);transition:all .2s;border:none;background:transparent;font-family:'Sora',sans-serif}
+.tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+
+/* PROGRESS */
+.progress-bar{background:var(--border);border-radius:99px;height:6px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+
+/* SVG SHEET */
+.sheet-wrap{border:1px solid var(--border);border-radius:10px;background:var(--bg);display:inline-block;padding:4px}
+svg text{user-select:none}
+
+/* NOTIFICATION */
+.notif{position:fixed;top:20px;right:20px;background:var(--green);color:#000;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;display:none;animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateX(120%)}to{transform:translateX(0)}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+
+/* KROMKA COLOR */
+.krom-dot{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}
+
+/* SIDE BUTTON */
+.side-btn{
+  padding:8px 12px;
+  border-radius:6px;
+  border:2px solid var(--border);
+  background:transparent;
+  color:var(--text);
+  cursor:pointer;
+  font-size:12px;
+  font-weight:600;
+  transition:all .2s;
+  font-family:'Sora',sans-serif;
+}
+.side-btn:hover{
+  border-color:var(--accent);
+  background:rgba(240,165,0,.1);
+  transform:translateY(-1px);
+}
+.side-btn.active{
+  border-color:var(--accent);
+  background:linear-gradient(135deg,rgba(240,165,0,.4),rgba(224,90,0,.3));
+  color:var(--accent);
+  font-weight:700;
+  box-shadow:0 0 12px rgba(240,165,0,.3);
+}
+
+.empty-state{text-align:center;padding:40px;color:var(--muted)}
+.empty-state .ei{font-size:48px;margin-bottom:12px}
+.empty-state p{font-size:13px}
+
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+
+/* AUTH SCREEN */
+#role-screen{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;align-items:center;justify-content:center;padding:24px}
+.auth-wrap{width:100%;max-width:440px}
+.auth-brand{text-align:center;margin-bottom:28px}
+.auth-brand-icon{font-size:52px;margin-bottom:8px}
+.auth-brand h1{font-size:28px;font-weight:800;letter-spacing:-1px;color:var(--text)}
+.auth-brand h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.auth-brand p{font-size:13px;color:var(--muted);margin-top:4px}
+.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px}
+.auth-tabs{display:flex;gap:4px;background:var(--card);border-radius:10px;padding:4px;margin-bottom:24px}
+.auth-tab{flex:1;padding:8px;border:none;border-radius:7px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;transition:all .2s}
+.auth-tab.active{background:var(--surface);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.auth-form{display:none;flex-direction:column;gap:10px}
+.auth-form.active{display:flex}
+.auth-form label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:-4px}
+.auth-footer{text-align:center;margin-top:16px}
+.auth-footer a{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:none}
+.auth-footer a:hover{color:var(--text)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9998;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:32px;max-width:420px;width:100%}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.modal-desc{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+.modal-form{display:flex;flex-direction:column;gap:10px}
+.modal-form label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:-4px}
+.modal-actions{display:flex;gap:8px;margin-top:4px}
+
+/* ADMIN MODAL */
+.admin-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)}
+.admin-modal-box{background:var(--surface);border:1px solid rgba(239,68,68,.3);border-radius:18px;padding:32px;max-width:360px;width:100%}
+
+/* SELLER BTN */
+#btn-seller-mode{background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.3);color:var(--accent);font-weight:700;font-size:12px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Sora',sans-serif;transition:all .2s;display:none}
+#btn-seller-mode:hover{background:rgba(240,165,0,.25);transform:translateY(-1px)}
+#btn-buyer-mode{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:var(--blue);font-weight:700;font-size:12px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Sora',sans-serif;transition:all .2s;display:none}
+#btn-buyer-mode:hover{background:rgba(59,130,246,.2);transform:translateY(-1px)}
+
+/* PRODUCT GRID */
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.product-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .2s}
+.product-card:hover{transform:translateY(-3px);border-color:rgba(240,165,0,.3)}
+.product-img{width:100%;height:160px;object-fit:cover;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:48px;color:var(--muted)}
+.product-img img{width:100%;height:100%;object-fit:cover}
+.product-body{padding:14px}
+.product-body h4{font-size:14px;font-weight:700;margin-bottom:4px}
+.product-body .price{font-size:18px;font-weight:800;color:var(--accent);margin:8px 0}
+.product-body .seller{font-size:11px;color:var(--muted)}
+.product-body .desc{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* IMAGE UPLOAD */
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(240,165,0,.05)}
+.upload-zone .uz-icon{font-size:40px;margin-bottom:8px}
+.upload-preview{margin-top:12px;border-radius:10px;overflow:hidden;max-height:200px}
+.upload-preview img{width:100%;max-height:200px;object-fit:contain;background:var(--bg)}
+
+/* MULTI IMAGE SLOTS */
+.img-slots-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:4px}
+.img-slot{border:2px dashed var(--border);border-radius:10px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;background:var(--bg);position:relative;overflow:hidden}
+.img-slot:hover{border-color:var(--accent);background:rgba(240,165,0,.05)}
+.img-slot.has-img{border-color:var(--accent);border-style:solid}
+.img-slot.has-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.img-slot .slot-icon{font-size:22px;margin-bottom:4px;color:var(--muted)}
+.img-slot .slot-num{font-size:10px;color:var(--muted);font-weight:700}
+.img-slot .slot-del{position:absolute;top:4px;right:4px;background:rgba(239,68,68,.85);color:#fff;border:none;border-radius:4px;width:18px;height:18px;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;z-index:2}
+.img-slot.has-img .slot-del{display:flex}
+.img-slot.has-img .slot-icon,.img-slot.has-img .slot-num{display:none}
+.img-slot-main{grid-column:span 2;grid-row:span 2;aspect-ratio:1}
+
+/* CART */
+.cart-item{display:flex;gap:12px;padding:12px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:8px;align-items:center}
+.cart-item img{width:60px;height:60px;object-fit:cover;border-radius:8px;background:var(--bg)}
+.cart-item-info{flex:1}
+.cart-item-info h5{font-size:13px;font-weight:600}
+.cart-item-info span{font-size:12px;color:var(--muted)}
+
+/* ROLE BADGE */
+.role-badge{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.role-badge.admin{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.role-badge.seller{background:rgba(240,165,0,.15);color:var(--accent);border:1px solid rgba(240,165,0,.3)}
+.role-badge.buyer{background:rgba(59,130,246,.15);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
+
+#app{display:none;min-height:100vh;width:100%}
+#app.active{display:flex}
+
+@media(max-width:768px){
+  .auth-wrap{padding:16px}
+  body{overflow:auto}
+  #sidebar{width:100%;height:auto;border-right:none;border-bottom:1px solid var(--border)}
+  #app.active{flex-direction:column}
+  #main{height:auto}
+}
+
+/* ============================================================
+   PREMIUM THEME OVERRIDES — refined visual system
+   ============================================================ */
+:root{
+  --bg:#070810;
+  --bg-2:#0b0d16;
+  --surface:#10131d;
+  --surface-2:#141826;
+  --card:#161a27;
+  --card-2:#1b2030;
+  --border:#242a3b;
+  --border-soft:#1c2130;
+  --accent:#ffb627;
+  --accent2:#ff7a18;
+  --accent-soft:rgba(255,182,39,.14);
+  --accent-glow:rgba(255,150,20,.35);
+  --green:#34d399;--red:#f87171;--blue:#60a5fa;
+  --text:#eef1f8;--muted:#8a93a8;
+  --radius:16px;--radius-sm:11px;
+  --shadow-sm:0 2px 8px rgba(0,0,0,.3);
+  --shadow:0 12px 32px -12px rgba(0,0,0,.55);
+  --shadow-lg:0 28px 64px -20px rgba(0,0,0,.7);
+  --ring:0 0 0 3px rgba(255,182,39,.18);
+}
+
+body{
+  background:
+    radial-gradient(900px 600px at 12% -8%, rgba(255,122,24,.10), transparent 60%),
+    radial-gradient(1000px 700px at 110% 8%, rgba(96,165,250,.08), transparent 55%),
+    radial-gradient(800px 800px at 50% 120%, rgba(255,182,39,.06), transparent 60%),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+
+/* ---- SIDEBAR ---- */
+#sidebar{
+  background:linear-gradient(180deg,var(--surface),var(--bg-2));
+  border-right:1px solid var(--border-soft);
+  box-shadow:1px 0 0 rgba(255,255,255,.02);
+}
+.logo{padding:22px 18px}
+.logo-icon{box-shadow:0 6px 18px -4px var(--accent-glow);border-radius:12px}
+.logo-text{background:linear-gradient(135deg,#fff,#cfd6e6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-section{margin-top:6px}
+.nav-item{margin:2px 10px;padding:10px 12px;border-radius:10px;border-left:none;position:relative;font-weight:600}
+.nav-item:hover{background:rgba(255,255,255,.05);color:var(--text);transform:translateX(2px)}
+.nav-item.active{
+  background:linear-gradient(135deg,rgba(255,182,39,.18),rgba(255,122,24,.08));
+  color:var(--accent);border-left:none;
+  box-shadow:inset 0 0 0 1px rgba(255,182,39,.22);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);
+  width:3px;height:18px;border-radius:99px;background:linear-gradient(180deg,var(--accent),var(--accent2));
+}
+
+/* ---- TOPBAR ---- */
+#topbar{
+  height:58px;
+  background:linear-gradient(180deg,rgba(20,24,38,.85),rgba(16,19,29,.7));
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-soft);
+}
+.topbar-title{font-size:16px;letter-spacing:-.3px}
+.topbar-badge{background:var(--accent-soft);border-color:rgba(255,182,39,.28)}
+
+/* ---- CARDS ---- */
+.card{
+  background:linear-gradient(180deg,var(--card),var(--card-2));
+  border:1px solid var(--border-soft);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;
+  transition:border-color .25s,transform .25s,box-shadow .25s;
+}
+.card:hover{border-color:rgba(255,182,39,.16)}
+.card-title{font-size:13.5px;letter-spacing:.2px}
+
+/* ---- STAT CARDS ---- */
+.stat{
+  background:linear-gradient(180deg,var(--card),var(--card-2));
+  border:1px solid var(--border-soft);border-radius:var(--radius);
+  box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s,border-color .25s;
+}
+.stat::before{height:3px;opacity:.95}
+.stat::after{
+  content:'';position:absolute;width:120px;height:120px;border-radius:50%;
+  right:-30px;top:-30px;filter:blur(8px);opacity:.10;pointer-events:none;
+}
+.stat.orange::after{background:var(--accent)}
+.stat.green::after{background:var(--green)}
+.stat.blue::after{background:var(--blue)}
+.stat.red::after{background:var(--red)}
+.stat:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:rgba(255,182,39,.2)}
+.stat-val{font-size:28px;letter-spacing:-.5px}
+.stat-icon{font-size:26px}
+
+/* ---- INPUTS ---- */
+input,select,textarea{
+  background:rgba(7,8,16,.6);border:1px solid var(--border);border-radius:10px;
+  padding:11px 13px;transition:border-color .2s,box-shadow .2s,background .2s;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--accent);box-shadow:var(--ring);background:rgba(7,8,16,.85);
+}
+input::placeholder,textarea::placeholder{color:#5b6478}
+
+/* ---- BUTTONS ---- */
+.btn{border-radius:10px;padding:10px 18px;font-weight:600;letter-spacing:.2px;position:relative;overflow:hidden}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1206;font-weight:700;
+  box-shadow:0 8px 22px -8px var(--accent-glow);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 30px -10px var(--accent-glow);opacity:1}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary::after{
+  content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);
+  transform:translateX(-120%);transition:transform .6s;
+}
+.btn-primary:hover::after{transform:translateX(120%)}
+.btn-secondary{background:rgba(255,255,255,.05);border:1px solid var(--border)}
+.btn-secondary:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.btn-green:hover{background:rgba(52,211,153,.25);transform:translateY(-1px)}
+
+/* ---- TABLES ---- */
+thead tr{border-bottom:1px solid var(--border)}
+td{border-bottom:1px solid rgba(255,255,255,.045)}
+tr:hover td{background:rgba(255,182,39,.04)}
+
+/* ---- TABS ---- */
+.tabs{background:var(--surface-2);padding:5px;border:1px solid var(--border-soft);border-radius:12px}
+.tab.active{background:linear-gradient(180deg,var(--card),var(--card-2));box-shadow:var(--shadow-sm)}
+
+/* ---- TAGS ---- */
+.tag{border:1px solid transparent}
+.tag-green{border-color:rgba(52,211,153,.25)}
+.tag-orange{border-color:rgba(255,182,39,.25)}
+.tag-red{border-color:rgba(248,113,113,.25)}
+.tag-blue{border-color:rgba(96,165,250,.25)}
+
+/* ---- PROGRESS ---- */
+.progress-fill{box-shadow:0 0 12px -2px var(--accent-glow)}
+
+/* ---- PRODUCT CARDS ---- */
+.product-card{
+  background:linear-gradient(180deg,var(--card),var(--card-2));
+  border:1px solid var(--border-soft);border-radius:var(--radius);box-shadow:var(--shadow);
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+}
+.product-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:rgba(255,182,39,.3)}
+.product-body .price{letter-spacing:-.5px}
+
+/* ---- NOTIFICATION ---- */
+.notif{
+  border-radius:12px;box-shadow:var(--shadow-lg);font-weight:700;
+  border:1px solid rgba(255,255,255,.15);
+}
+
+/* ---- SCROLLBAR ---- */
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--border),#2c3346);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+
+/* ---- ENTRANCE ANIMATIONS ---- */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.page.active{animation:fadeUp .4s ease both}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+
+/* ============================================================
+   PREMIUM AUTH SCREEN
+   ============================================================ */
+#role-screen{
+  background:
+    radial-gradient(700px 500px at 18% 12%, rgba(255,122,24,.16), transparent 60%),
+    radial-gradient(700px 500px at 85% 85%, rgba(96,165,250,.12), transparent 55%),
+    linear-gradient(160deg,#0a0c15,#070810);
+  overflow:hidden;
+}
+#role-screen::before,#role-screen::after{
+  content:'';position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;pointer-events:none;
+  animation:floatOrb 14s ease-in-out infinite;
+}
+#role-screen::before{width:380px;height:380px;background:radial-gradient(circle,rgba(255,150,20,.5),transparent 70%);top:-90px;left:-80px}
+#role-screen::after{width:420px;height:420px;background:radial-gradient(circle,rgba(96,165,250,.4),transparent 70%);bottom:-120px;right:-100px;animation-delay:-7s}
+@keyframes floatOrb{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,40px)}}
+
+.auth-wrap{position:relative;z-index:2;max-width:430px;animation:fadeUp .5s ease both}
+.auth-brand{margin-bottom:24px}
+.auth-brand-icon{
+  display:inline-flex;align-items:center;justify-content:center;width:74px;height:74px;
+  font-size:38px;border-radius:20px;margin-bottom:14px;
+  background:linear-gradient(135deg,rgba(255,182,39,.2),rgba(255,122,24,.1));
+  border:1px solid rgba(255,182,39,.3);box-shadow:0 12px 30px -8px var(--accent-glow);
+}
+.auth-brand h1{font-size:32px}
+.auth-brand p{font-size:13.5px;margin-top:6px}
+.auth-box{
+  background:linear-gradient(180deg,rgba(20,24,38,.85),rgba(13,16,25,.9));
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.07);border-radius:22px;padding:30px;
+  box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.05);
+}
+.auth-tabs{background:rgba(7,8,16,.6);border:1px solid var(--border-soft);border-radius:12px;padding:5px;margin-bottom:22px}
+.auth-tab.active{background:linear-gradient(180deg,var(--card),var(--card-2));color:var(--text);box-shadow:var(--shadow-sm)}
+.auth-form{gap:13px}
+.auth-form label{margin-bottom:-2px}
+.auth-form .btn-primary{margin-top:8px;padding:12px;font-size:14px}
+
+/* password field with toggle */
+.pw-field{position:relative}
+.pw-field input{padding-right:44px;width:100%}
+.pw-toggle{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  background:transparent;border:none;cursor:pointer;font-size:16px;
+  padding:6px 8px;border-radius:8px;line-height:1;opacity:.7;transition:opacity .2s,background .2s;
+}
+.pw-toggle:hover{opacity:1;background:rgba(255,255,255,.06)}
+
+/* password strength */
+.pw-strength{height:5px;border-radius:99px;background:var(--border);overflow:hidden;margin-top:2px;display:none}
+.pw-strength.show{display:block}
+.pw-strength-bar{height:100%;width:0;border-radius:99px;transition:width .3s,background .3s}
+.pw-hint{font-size:11px;color:var(--muted);margin-top:-4px;min-height:14px;transition:color .2s}
+
+/* field error state */
+.field-error{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(248,113,113,.16)!important}
+
+/* modals */
+.modal-box,.admin-modal-box{
+  background:linear-gradient(180deg,rgba(20,24,38,.95),rgba(13,16,25,.97));
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:var(--shadow-lg);animation:pop .3s ease both;
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="role-screen">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="auth-brand-icon">🪵</div>
+      <h1>Mebel<span>Pro</span></h1>
+      <p>Mebel ishlab chiqarish va savdo tizimi</p>
+    </div>
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">🔑 Kirish</button>
+        <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">📝 Ro'yxatdan o'tish</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="auth-form active" id="auth-login">
+        <label>Foydalanuvchi nomi</label>
+        <input id="login-username" placeholder="username" autocomplete="username" onkeydown="if(event.key==='Enter') doLogin()"/>
+        <label>Parol</label>
+        <div class="pw-field">
+          <input id="login-password" type="password" placeholder="••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()"/>
+          <button type="button" class="pw-toggle" aria-label="Parolni ko'rsatish" onclick="togglePw('login-password',this)">👁️</button>
+        </div>
+        <button class="btn btn-primary" onclick="doLogin()" style="width:100%;margin-top:4px">Kirish →</button>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="auth-form" id="auth-register">
+        <label>To'liq ismingiz</label>
+        <input id="reg-name" placeholder="Ismi Familiya" autocomplete="name" oninput="clearFieldError(this)" onkeydown="if(event.key==='Enter') doRegister()"/>
+        <label>Telefon raqam</label>
+        <input id="reg-phone" type="tel" inputmode="tel" placeholder="+998 90 000 00 00" autocomplete="tel" oninput="formatPhone(this)" onkeydown="if(event.key==='Enter') doRegister()"/>
+        <label>Foydalanuvchi nomi</label>
+        <input id="reg-username" placeholder="username (lotin harflari)" autocomplete="username" oninput="clearFieldError(this)" onkeydown="if(event.key==='Enter') doRegister()"/>
+        <label>Parol</label>
+        <div class="pw-field">
+          <input id="reg-password" type="password" placeholder="Kamida 4 belgi" autocomplete="new-password" oninput="onPwInput()" onkeydown="if(event.key==='Enter') doRegister()"/>
+          <button type="button" class="pw-toggle" aria-label="Parolni ko'rsatish" onclick="togglePw('reg-password',this)">👁️</button>
+        </div>
+        <div class="pw-strength" id="reg-pw-strength"><div class="pw-strength-bar" id="reg-pw-bar"></div></div>
+        <div class="pw-hint" id="reg-pw-hint"></div>
+        <label>Parolni tasdiqlang</label>
+        <div class="pw-field">
+          <input id="reg-password2" type="password" placeholder="Parolni qayta kiriting" autocomplete="new-password" oninput="clearFieldError(this)" onkeydown="if(event.key==='Enter') doRegister()"/>
+          <button type="button" class="pw-toggle" aria-label="Parolni ko'rsatish" onclick="togglePw('reg-password2',this)">👁️</button>
+        </div>
+        <button class="btn btn-primary" onclick="doRegister()" style="width:100%;margin-top:4px">✅ Ro'yxatdan o'tish</button>
+      </div>
+    </div>
+    <div class="auth-footer">
+      <a onclick="openAdminModal()">⚙️ Admin kirish</a>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN MODAL -->
+<div id="admin-modal" class="admin-modal-overlay" style="display:none">
+  <div class="admin-modal-box">
+    <div class="modal-title">⚙️ Admin Kirish</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Admin paroli bilan kirish. Demo parol: <code style="color:var(--accent)">admin123</code></div>
+    <div class="modal-form">
+      <label>Admin paroli</label>
+      <input id="admin-pass" type="password" placeholder="Parol" onkeydown="if(event.key==='Enter') doAdminLogin()"/>
+      <div class="modal-actions">
+        <button class="btn btn-danger" onclick="doAdminLogin()" style="flex:1">⚙️ Kirish</button>
+        <button class="btn btn-secondary" onclick="closeAdminModal()">Bekor</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SOTUVCHI BO'LISH MODAL -->
+<div id="seller-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">🏪 Sotuvchi Bo'lish</div>
+    <div class="modal-desc">
+      Firma nomingiz va firma parolingizni kiriting.<br>
+      Yangi firma bo'lsa — avtomatik ro'yxatdan o'tkaziladi.<br>
+      Mavjud firma bo'lsa — parol tekshiriladi va siz o'sha firma nomidan kirasiz.
+    </div>
+    <div class="modal-form">
+      <label>Firma / Do'kon nomi</label>
+      <input id="firma-name" placeholder="Masalan: Comfort Mebel" onkeydown="if(event.key==='Enter') becomeSeller()"/>
+      <label>Firma paroli</label>
+      <input id="firma-pass" type="password" placeholder="O'zingiz o'ylab toping (min 4 belgi)" onkeydown="if(event.key==='Enter') becomeSeller()"/>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="becomeSeller()" style="flex:1">✅ Kirish / Ro'yxatdan o'tish</button>
+        <button class="btn btn-secondary" onclick="closeSellerModal()">✕ Bekor</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+<div id="sidebar">
+  <div class="logo">
+    <div class="logo-icon">🪵</div>
+    <div>
+      <div class="logo-text">MebelPro</div>
+      <div class="logo-sub">v2.0 Professional</div>
+    </div>
+  </div>
+  <nav id="sidebar-nav">
+    <!-- Dinamik navigatsiya JS orqali to'ldiriladi -->
+  </nav>
+  <div class="sidebar-footer">
+    <div id="sidebar-user" style="margin-bottom:8px"></div>
+    MebelPro © 2025<br>
+    <button class="btn btn-secondary btn-sm" style="width:100%;margin-top:8px" onclick="logout()">🚪 Chiqish</button>
+  </div>
+</div>
+
+<div id="main">
+  <div id="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-badge" id="page-badge">ASOSIY</div>
+    <div style="flex:1"></div>
+    <button id="btn-seller-mode" onclick="openSellerModal()">🏪 Sotuvchi bo'lish</button>
+    <button id="btn-buyer-mode" onclick="switchToBuyer()">🛒 Xarid qilish</button>
+    <span id="role-badge-top" class="role-badge"></span>
+    <span style="font-size:12px;color:var(--muted)" id="clock"></span>
+  </div>
+  <div id="content">
+
+    <!-- DASHBOARD -->
+    <div class="page" id="page-dashboard">
+      <div class="grid4" style="margin-bottom:16px">
+        <div class="stat orange">
+          <div class="stat-icon">📋</div>
+          <div class="stat-val" id="dash-orders">0</div>
+          <div class="stat-label">Jami Buyurtmalar</div>
+          <div class="stat-change">↑ Faol</div>
+        </div>
+        <div class="stat green">
+          <div class="stat-icon">✅</div>
+          <div class="stat-val" id="dash-done">0</div>
+          <div class="stat-label">Bajarilgan</div>
+        </div>
+        <div class="stat blue">
+          <div class="stat-icon">👥</div>
+          <div class="stat-val" id="dash-clients">0</div>
+          <div class="stat-label">Mijozlar</div>
+        </div>
+        <div class="stat red">
+          <div class="stat-icon">💵</div>
+          <div class="stat-val" id="dash-revenue">0</div>
+          <div class="stat-label">Daromad (so'm)</div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title"><span>📋</span> So'nggi Buyurtmalar</div>
+          <table>
+            <thead><tr><th>Buyurtma</th><th>Mijoz</th><th>Holat</th><th>Summa</th></tr></thead>
+            <tbody id="dash-orders-table"><tr><td colspan="4" class="empty-state"><div class="ei">📭</div><p>Buyurtma yo'q</p></td></tr></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>📊</span> Materiallar Holati</div>
+          <div id="dash-materials">
+            <div class="empty-state"><div class="ei">📦</div><p>Material qo'shing</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="page" id="page-orders">
+      <div class="card">
+        <div class="card-title"><span>➕</span> Yangi Buyurtma</div>
+        <div class="form-row cols3">
+          <div><label>Buyurtma raqami</label><input id="ord-num" placeholder="BUY-001" /></div>
+          <div><label>Mijoz ismi</label><input id="ord-client" placeholder="Abdullayev Jasur" /></div>
+          <div><label>Telefon</label><input id="ord-phone" placeholder="+998 90 000 00 00" /></div>
+        </div>
+        <div class="form-row cols3">
+          <div><label>Mahsulot nomi</label><input id="ord-name" placeholder="Kuxnya garnituri" /></div>
+          <div><label>Narxi (so'm)</label><input id="ord-price" type="number" placeholder="5000000" /></div>
+          <div><label>Holati</label>
+            <select id="ord-status">
+              <option value="yangi">🔵 Yangi</option>
+              <option value="jarayonda">🟡 Jarayonda</option>
+              <option value="tayyor">🟢 Tayyor</option>
+              <option value="yetkazildi">✅ Yetkazildi</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div><label>Izoh</label><textarea id="ord-note" rows="2" style="resize:vertical" placeholder="Qo'shimcha ma'lumot..."></textarea></div>
+        </div>
+        <button class="btn btn-primary" onclick="addOrder()">➕ Buyurtma Qo'shish</button>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>📋</span> Barcha Buyurtmalar</div>
+        <table>
+          <thead><tr><th>#</th><th>Buyurtma</th><th>Mijoz</th><th>Telefon</th><th>Mahsulot</th><th>Narx</th><th>Holat</th><th>Sana</th><th>Amal</th></tr></thead>
+          <tbody id="orders-table"></tbody>
+        </table>
+        <div id="orders-empty" class="empty-state"><div class="ei">📭</div><p>Hali buyurtma yo'q</p></div>
+      </div>
+    </div>
+
+    <!-- CUTTING OPTIMIZER -->
+    <div class="page" id="page-cutting">
+      <div class="grid2">
+        <div>
+          <div class="card">
+            <div class="card-title"><span>📐</span> LDSP Varaq O'lchami</div>
+            <div class="form-row">
+              <div><label>Standart o'lcham</label>
+                <select id="sheet-preset" onchange="applySheetPreset()">
+                  <option value="2750,1830">2750 × 1830 mm (Eng keng tarqalgan)</option>
+                  <option value="2440,1220">2440 × 1220 mm (Kichik)</option>
+                  <option value="2800,2070">2800 × 2070 mm (Katta)</option>
+                  <option value="3500,1750">3500 × 1750 mm (Maxsus)</option>
+                  <option value="custom">✏️ O'zim kiritaman</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row cols2" id="custom-sheet" style="display:none">
+              <div><label>Eni (mm)</label><input id="sheet-w" type="number" value="2750"/></div>
+              <div><label>Bo'yi (mm)</label><input id="sheet-h" type="number" value="1830"/></div>
+            </div>
+            <div class="form-row cols2">
+              <div><label>Arra kengligi (mm)</label><input id="saw-w" type="number" value="4"/></div>
+              <div><label>Varaq narxi (so'm)</label><input id="sheet-price" type="number" value="350000" placeholder="350000"/></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><span>➕</span> Detal Qo'shish</div>
+            <div class="form-row cols2">
+              <div><label>Detal nomi</label><input id="part-name" placeholder="Yon panel"/></div>
+              <div><label>Rangi/Matosi</label><input id="part-color" placeholder="Oq, Yong'oq..."/></div>
+            </div>
+            <div class="form-row cols3">
+              <div><label>Eni (mm)</label><input id="part-w" type="number" placeholder="600"/></div>
+              <div><label>Bo'yi (mm)</label><input id="part-h" type="number" placeholder="720"/></div>
+              <div><label>Soni</label><input id="part-qty" type="number" value="1" min="1"/></div>
+            </div>
+            <div class="form-row cols2">
+              <div><label>Kromka eni (mm)</label><input id="part-krom" type="number" value="1" placeholder="1 yoki 2"/></div>
+              <div><label>Kromka tomonlari</label>
+                <div id="part-krom-sides-selector" style="display:flex;gap:8px;flex-wrap:wrap">
+                  <button type="button" class="side-btn" data-sides="0" onclick="togglePartSide(event)">❌ Yo'q</button>
+                  <button type="button" class="side-btn" data-sides="1" onclick="togglePartSide(event)">1️⃣ 1 tomon</button>
+                  <button type="button" class="side-btn" data-sides="2" onclick="togglePartSide(event)">2️⃣ 2 tomon</button>
+                  <button type="button" class="side-btn" data-sides="3" onclick="togglePartSide(event)">3️⃣ 3 tomon</button>
+                  <button type="button" class="side-btn" data-sides="4" onclick="togglePartSide(event)">4️⃣ 4 tomon</button>
+                </div>
+                <input id="part-krom-sides" type="hidden" value="0"/>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="addPart()" style="width:100%">+ Detal Qo'shish</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><span>📋</span> Detallar (<span id="parts-count">0</span> ta)</div>
+            <div id="parts-list"><div class="empty-state"><div class="ei">📐</div><p>Detal qo'shing</p></div></div>
+            <hr class="divider"/>
+            <button class="btn btn-primary" onclick="calculate()" style="width:100%;font-size:15px;padding:13px">🔢 Hisoblash</button>
+          </div>
+        </div>
+
+        <div>
+          <div id="result-area" style="display:none">
+            <div class="grid2" style="margin-bottom:16px">
+              <div class="stat orange"><div class="stat-icon">🪵</div><div class="stat-val" id="r-sheets">0</div><div class="stat-label">Varaqlar</div></div>
+              <div class="stat green"><div class="stat-icon">📈</div><div class="stat-val" id="r-eff">0%</div><div class="stat-label">Samaradorlik</div></div>
+            </div>
+            <div class="card" style="margin-bottom:12px">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="sheet-tabs"></div>
+              <div id="sheet-visual"></div>
+            </div>
+            <div class="card">
+              <div class="card-title"><span>📊</span> To'liq Xulosa</div>
+              <div id="result-summary"></div>
+            </div>
+          </div>
+          <div id="no-result" class="card">
+            <div class="empty-state"><div class="ei">✂️</div><p>Detallarni kiriting va "Hisoblash" tugmasini bosing</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KROMKA -->
+    <div class="page" id="page-kromka">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title"><span>➕</span> Detal Kromkasi</div>
+          <div class="form-row cols2">
+            <div><label>Detal nomi</label><input id="kr-name" placeholder="Detal nomi"/></div>
+            <div><label>Kromka turi</label><input id="kr-type" placeholder="PVC 2mm yoki ABS..."/></div>
+          </div>
+          <div class="form-row cols2">
+            <div><label>Detal eni (mm)</label><input id="kr-w" type="number" placeholder="600"/></div>
+            <div><label>Detal bo'yi (mm)</label><input id="kr-h" type="number" placeholder="720"/></div>
+          </div>
+          <div class="form-row cols2">
+            <div><label>Soni</label><input id="kr-qty" type="number" value="1" min="1"/></div>
+            <div><label>Krom tomonlari</label>
+              <div id="kr-sides-selector" style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" class="side-btn" data-side="top" onclick="toggleSide(event)">⬆️ Yuqori</button>
+                <button type="button" class="side-btn" data-side="bottom" onclick="toggleSide(event)">⬇️ Pastki</button>
+                <button type="button" class="side-btn" data-side="left" onclick="toggleSide(event)">⬅️ Chap</button>
+                <button type="button" class="side-btn" data-side="right" onclick="toggleSide(event)">➡️ O'ng</button>
+              </div>
+              <input id="kr-sides" type="hidden" value=""/>
+            </div>
+          </div>
+          <div class="form-row cols2">
+            <div><label>Kromka narxi (so'm/metr)</label><input id="kr-price" type="number" value="3000" placeholder="3000"/></div>
+            <div><label>Rang</label>
+              <select id="kr-color">
+                <option value="#e8d5b7">🟤 Yong'oq</option>
+                <option value="#f5f5f5">⬜ Oq</option>
+                <option value="#2c2c2c">⬛ Qora</option>
+                <option value="#c0392b">🔴 Qizil</option>
+                <option value="#3498db">🔵 Ko'k</option>
+                <option value="#27ae60">🟢 Yashil</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="addKromka()" style="width:100%">+ Qo'shish</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>📊</span> Kromka Hisobi</div>
+          <div id="kr-result">
+            <div class="empty-state"><div class="ei">📏</div><p>Detallar qo'shing</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>📋</span> Kromka Ro'yxati</div>
+        <table>
+          <thead><tr><th>Rang</th><th>Nomi</th><th>Turi</th><th>En × Bo'y</th><th>Soni</th><th>Tomonlar</th><th>Uzunlik</th><th>Narx</th><th></th></tr></thead>
+          <tbody id="kr-table"></tbody>
+        </table>
+        <div id="kr-empty" class="empty-state"><div class="ei">📏</div><p>Detal qo'shing</p></div>
+      </div>
+    </div>
+
+    <!-- PRICE CALCULATOR -->
+    <div class="page" id="page-price">
+      <div class="grid2">
+        <div>
+          <div class="card">
+            <div class="card-title"><span>💰</span> Narx Kalkulyator</div>
+            <div class="form-row cols2">
+              <div><label>Loyiha nomi</label><input id="pr-project" placeholder="Kuxnya garnituri"/></div>
+              <div><label>Mijoz</label><input id="pr-client" placeholder="Mijoz ismi"/></div>
+            </div>
+            <hr class="divider"/>
+            <div class="card-title"><span>📦</span> Material xarajatlari</div>
+            <div id="pr-materials">
+              <div class="form-row cols3" style="margin-bottom:8px">
+                <div><label>Material nomi</label><input class="pr-mat-name" placeholder="LDSP 16mm"/></div>
+                <div><label>Miqdor</label><input class="pr-mat-qty" type="number" value="1"/></div>
+                <div><label>Narxi (so'm)</label><input class="pr-mat-price" type="number" placeholder="350000"/></div>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="addMaterialRow()">+ Material qo'shish</button>
+            <hr class="divider"/>
+            <div class="card-title"><span>🔧</span> Ishchi kuchi xarajatlari</div>
+            <div id="pr-works">
+              <div class="form-row cols3" style="margin-bottom:8px">
+                <div><label>Ish turi</label><input class="pr-work-name" placeholder="Yig'ish"/></div>
+                <div><label>Soat</label><input class="pr-work-hours" type="number" value="8"/></div>
+                <div><label>Soat narxi (so'm)</label><input class="pr-work-rate" type="number" placeholder="50000"/></div>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="addWorkRow()">+ Ish qo'shish</button>
+            <hr class="divider"/>
+            <div class="form-row cols2">
+              <div><label>Qo'shimcha xarajat (so'm)</label><input id="pr-extra" type="number" value="0"/></div>
+              <div><label>Foyda ulushi (%)</label><input id="pr-margin" type="number" value="30"/></div>
+            </div>
+            <button class="btn btn-primary" onclick="calcPrice()" style="width:100%;margin-top:8px">💰 Narxni Hisoblash</button>
+          </div>
+        </div>
+        <div>
+          <div class="card" id="price-result-card" style="display:none">
+            <div class="card-title"><span>📊</span> Hisob Natijasi</div>
+            <div id="price-result"></div>
+          </div>
+          <div class="card" id="price-no-result">
+            <div class="empty-state"><div class="ei">💰</div><p>Ma'lumotlarni to'ldiring va hisoblang</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FITINGS / FURNITURA -->
+    <div class="page" id="page-fitings">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title"><span>➕</span> Furnitura Qo'shish</div>
+          <div class="form-row cols2">
+            <div><label>Furnitura nomi</label><input id="fit-name" placeholder="Petlya, Slayder..."/></div>
+            <div><label>Turi</label>
+              <select id="fit-type">
+                <option>Petlya (Ilgak)</option>
+                <option>Slayder (Tortma)</option>
+                <option>Ruchka</option>
+                <option>Vintlar</option>
+                <option>Konfirmat</option>
+                <option>Magnit</option>
+                <option>To'xtatgich</option>
+                <option>Boshqa</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row cols3">
+            <div><label>Soni</label><input id="fit-qty" type="number" value="1" min="1"/></div>
+            <div><label>Birlik narxi (so'm)</label><input id="fit-price" type="number" placeholder="5000"/></div>
+            <div><label>Brand/Model</label><input id="fit-brand" placeholder="Blum, Hettich..."/></div>
+          </div>
+          <div class="form-row">
+            <div><label>Izoh</label><input id="fit-note" placeholder="Qo'shimcha ma'lumot"/></div>
+          </div>
+          <button class="btn btn-primary" onclick="addFiting()" style="width:100%">+ Qo'shish</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>📊</span> Furnitura Umumiy Hisobi</div>
+          <div id="fit-summary"><div class="empty-state"><div class="ei">🔩</div><p>Furnitura qo'shing</p></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>🔩</span> Furnitura Ro'yxati</div>
+        <table>
+          <thead><tr><th>#</th><th>Nomi</th><th>Turi</th><th>Brand</th><th>Soni</th><th>Birlik Narx</th><th>Jami</th><th>Izoh</th><th></th></tr></thead>
+          <tbody id="fit-table"></tbody>
+        </table>
+        <div id="fit-empty" class="empty-state"><div class="ei">🔩</div><p>Furnitura qo'shing</p></div>
+      </div>
+    </div>
+
+    <!-- MATERIALS -->
+    <div class="page" id="page-materials">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title"><span>➕</span> Material Qo'shish</div>
+          <div class="form-row cols2">
+            <div><label>Material nomi</label><input id="mat-name" placeholder="LDSP 16mm Oq"/></div>
+            <div><label>Turi</label>
+              <select id="mat-type">
+                <option>LDSP</option>
+                <option>MDF</option>
+                <option>Krovat taxtasi</option>
+                <option>Orqa devor (HDF)</option>
+                <option>Shisha</option>
+                <option>Kromka</option>
+                <option>Furnitura</option>
+                <option>Boshqa</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row cols3">
+            <div><label>Miqdor</label><input id="mat-qty" type="number" value="10" min="0"/></div>
+            <div><label>O'lchov birligi</label>
+              <select id="mat-unit">
+                <option>varaq</option><option>metr</option><option>dona</option><option>kg</option><option>litr</option>
+              </select>
+            </div>
+            <div><label>Narxi (so'm)</label><input id="mat-price" type="number" placeholder="350000"/></div>
+          </div>
+          <div class="form-row cols2">
+            <div><label>Minimal zaxira</label><input id="mat-min" type="number" value="2"/></div>
+            <div><label>Yetkazib beruvchi</label><input id="mat-supplier" placeholder="Firm nomi"/></div>
+          </div>
+          <button class="btn btn-primary" onclick="addMaterial()" style="width:100%">+ Material Qo'shish</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>📊</span> Ombor Holati</div>
+          <div id="mat-summary"><div class="empty-state"><div class="ei">📦</div><p>Material qo'shing</p></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>🗄️</span> Barcha Materiallar</div>
+        <table>
+          <thead><tr><th>#</th><th>Nomi</th><th>Turi</th><th>Miqdor</th><th>Birlik</th><th>Narxi</th><th>Jami Qiymat</th><th>Holat</th><th>Yetkazuvchi</th><th></th></tr></thead>
+          <tbody id="mat-table"></tbody>
+        </table>
+        <div id="mat-empty" class="empty-state"><div class="ei">📦</div><p>Material qo'shing</p></div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="page" id="page-clients">
+      <div class="card">
+        <div class="card-title"><span>➕</span> Yangi Mijoz</div>
+        <div class="form-row cols4">
+          <div><label>Ismi</label><input id="cl-name" placeholder="To'liq ismi"/></div>
+          <div><label>Telefon</label><input id="cl-phone" placeholder="+998 90 000 00 00"/></div>
+          <div><label>Manzil</label><input id="cl-addr" placeholder="Shahar, tuman"/></div>
+          <div><label>Izoh</label><input id="cl-note" placeholder="Qo'shimcha..."/></div>
+        </div>
+        <button class="btn btn-primary" onclick="addClient()">➕ Mijoz Qo'shish</button>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>👥</span> Mijozlar Ro'yxati</div>
+        <table>
+          <thead><tr><th>#</th><th>Ismi</th><th>Telefon</th><th>Manzil</th><th>Buyurtmalar</th><th>Izoh</th><th>Qo'shilgan</th><th></th></tr></thead>
+          <tbody id="clients-table"></tbody>
+        </table>
+        <div id="cl-empty" class="empty-state"><div class="ei">👥</div><p>Mijoz qo'shing</p></div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <div class="grid3" style="margin-bottom:16px">
+        <div class="stat orange"><div class="stat-icon">💰</div><div class="stat-val" id="rep-revenue">0</div><div class="stat-label">Jami Daromad (so'm)</div></div>
+        <div class="stat green"><div class="stat-icon">📋</div><div class="stat-val" id="rep-orders">0</div><div class="stat-label">Jami Buyurtmalar</div></div>
+        <div class="stat blue"><div class="stat-icon">👥</div><div class="stat-val" id="rep-clients">0</div><div class="stat-label">Jami Mijozlar</div></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title"><span>📊</span> Buyurtmalar Holati</div>
+          <div id="rep-status-chart"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>🗄️</span> Ombor Qiymati</div>
+          <div id="rep-stock"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>🖨️</span> Hisobot Chiqarish</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-secondary" onclick="printReport()">🖨️ Chop etish</button>
+          <button class="btn btn-secondary" onclick="exportCSV()">📊 CSV Yuklab olish</button>
+          <button class="btn btn-secondary" onclick="exportData()">💾 Ma'lumotlarni saqlash</button>
+          <button class="btn btn-secondary" onclick="importData()">📂 Ma'lumotlarni yuklash</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SOTUVCHI PANELI ========== -->
+    <div class="page" id="page-seller-dashboard">
+      <div class="grid4" style="margin-bottom:16px">
+        <div class="stat orange"><div class="stat-icon">📦</div><div class="stat-val" id="sel-products">0</div><div class="stat-label">Mening Tovarlarim</div></div>
+        <div class="stat green"><div class="stat-icon">✅</div><div class="stat-val" id="sel-approved">0</div><div class="stat-label">Tasdiqlangan</div></div>
+        <div class="stat blue"><div class="stat-icon">📋</div><div class="stat-val" id="sel-orders">0</div><div class="stat-label">Buyurtmalar</div></div>
+        <div class="stat red"><div class="stat-icon">💵</div><div class="stat-val" id="sel-revenue">0</div><div class="stat-label">Daromad (so'm)</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>📦</span> So'nggi Tovarlarim</div>
+        <div id="sel-recent-products"><div class="empty-state"><div class="ei">📦</div><p>Hali tovar qo'shmadingiz</p></div></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-seller-add">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title"><span>➕</span> Yangi Tovar Qo'shish</div>
+          <div class="form-row cols2">
+            <div><label>Tovar nomi</label><input id="prod-name" placeholder="Kuxnya garnituri"/></div>
+            <div><label>Kategoriya</label>
+              <select id="prod-cat">
+                <option>Kuxnya</option><option>Shkaf</option><option>Stol-stul</option>
+                <option>Yotoqxona</option><option>Ofis mebeli</option><option>Boshqa</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row cols2">
+            <div><label>Narxi (so'm)</label><input id="prod-price" type="number" placeholder="5000000"/></div>
+            <div><label>O'lcham</label><input id="prod-size" placeholder="300×60×220 cm"/></div>
+          </div>
+          <div class="form-row">
+            <div><label>Tavsif</label><textarea id="prod-desc" rows="3" placeholder="Tovar haqida batafsil ma'lumot..."></textarea></div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label>Tovar rasmlari <span style="color:var(--accent)">5 tagacha</span> — Birinchisi asosiy rasm</label>
+              <div class="img-slots-grid" id="img-slots-grid">
+                <div class="img-slot img-slot-main" id="slot-0" onclick="$('img-input-0').click()" ondragover="slotDragOver(event,0)" ondrop="slotDrop(event,0)" ondragleave="slotDragLeave(event,0)">
+                  <div class="slot-icon">📷</div><div class="slot-num">ASOSIY</div>
+                  <button class="slot-del" onclick="removeSlotImage(event,0)">✕</button>
+                </div>
+                <div class="img-slot" id="slot-1" onclick="$('img-input-1').click()" ondragover="slotDragOver(event,1)" ondrop="slotDrop(event,1)" ondragleave="slotDragLeave(event,1)">
+                  <div class="slot-icon">➕</div><div class="slot-num">2</div>
+                  <button class="slot-del" onclick="removeSlotImage(event,1)">✕</button>
+                </div>
+                <div class="img-slot" id="slot-2" onclick="$('img-input-2').click()" ondragover="slotDragOver(event,2)" ondrop="slotDrop(event,2)" ondragleave="slotDragLeave(event,2)">
+                  <div class="slot-icon">➕</div><div class="slot-num">3</div>
+                  <button class="slot-del" onclick="removeSlotImage(event,2)">✕</button>
+                </div>
+                <div class="img-slot" id="slot-3" onclick="$('img-input-3').click()" ondragover="slotDragOver(event,3)" ondrop="slotDrop(event,3)" ondragleave="slotDragLeave(event,3)">
+                  <div class="slot-icon">➕</div><div class="slot-num">4</div>
+                  <button class="slot-del" onclick="removeSlotImage(event,3)">✕</button>
+                </div>
+                <div class="img-slot" id="slot-4" onclick="$('img-input-4').click()" ondragover="slotDragOver(event,4)" ondrop="slotDrop(event,4)" ondragleave="slotDragLeave(event,4)">
+                  <div class="slot-icon">➕</div><div class="slot-num">5</div>
+                  <button class="slot-del" onclick="removeSlotImage(event,4)">✕</button>
+                </div>
+              </div>
+              <input type="file" id="img-input-0" accept="image/*" style="display:none" onchange="handleImageUpload(event,0)"/>
+              <input type="file" id="img-input-1" accept="image/*" style="display:none" onchange="handleImageUpload(event,1)"/>
+              <input type="file" id="img-input-2" accept="image/*" style="display:none" onchange="handleImageUpload(event,2)"/>
+              <input type="file" id="img-input-3" accept="image/*" style="display:none" onchange="handleImageUpload(event,3)"/>
+              <input type="file" id="img-input-4" accept="image/*" style="display:none" onchange="handleImageUpload(event,4)"/>
+              <div style="font-size:11px;color:var(--muted);margin-top:6px">📌 JPG, PNG — har bir rasm maks. 2MB. Rasmni sudrab tashlab ham yuklash mumkin.</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="addProduct()" style="width:100%">📤 Tovarni Joylashtirish</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>💡</span> Ko'rsatmalar</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.8">
+            <p>1. Tovar nomi va narxini aniq kiriting</p>
+            <p>2. Sifatli rasm yuklang — yaxshi rasm ko'proq sotuv olib keladi</p>
+            <p>3. Tovar admin tomonidan tasdiqlangandan keyin katalogda ko'rinadi</p>
+            <p>4. Tasdiqlash odatda 24 soat ichida amalga oshiriladi</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-seller-products">
+      <div class="card">
+        <div class="card-title"><span>📦</span> Mening Tovarlarim</div>
+        <div id="seller-products-list"><div class="empty-state"><div class="ei">📦</div><p>Tovar qo'shing</p></div></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-seller-orders">
+      <div class="card">
+        <div class="card-title"><span>📋</span> Mening Buyurtmalarim</div>
+        <table>
+          <thead><tr><th>#</th><th>Buyurtma</th><th>Oluvchi</th><th>Telefon</th><th>Tovar</th><th>Summa</th><th>Holat</th><th>Sana</th><th>Amal</th></tr></thead>
+          <tbody id="seller-orders-table"></tbody>
+        </table>
+        <div id="seller-orders-empty" class="empty-state"><div class="ei">📭</div><p>Buyurtma yo'q</p></div>
+      </div>
+    </div>
+
+    <!-- ========== OLUVCHI PANELI ========== -->
+    <div class="page" id="page-buyer-catalog">
+      <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <input id="buyer-search" placeholder="🔍 Tovar qidirish..." style="max-width:300px" oninput="renderCatalog()"/>
+        <select id="buyer-filter-cat" onchange="renderCatalog()" style="max-width:180px">
+          <option value="">Barcha kategoriyalar</option>
+          <option>Kuxnya</option><option>Shkaf</option><option>Stol-stul</option>
+          <option>Yotoqxona</option><option>Ofis mebeli</option><option>Boshqa</option>
+        </select>
+      </div>
+      <div class="product-grid" id="catalog-grid">
+        <div class="empty-state" style="grid-column:1/-1"><div class="ei">🛒</div><p>Hozircha tovarlar yo'q</p></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-buyer-cart">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title"><span>🛒</span> Savatcha</div>
+          <div id="cart-items"><div class="empty-state"><div class="ei">🛒</div><p>Savatcha bo'sh</p></div></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>💳</span> Buyurtma Berish</div>
+          <div id="cart-summary"><div class="empty-state"><div class="ei">💳</div><p>Avval savatchaga tovar qo'shing</p></div></div>
+          <div id="cart-checkout" style="display:none">
+            <hr class="divider"/>
+            <div class="form-row">
+              <div><label>Yetkazish manzili</label><textarea id="buyer-addr" rows="2" placeholder="Shahar, tuman, ko'cha..."></textarea></div>
+            </div>
+            <div class="form-row">
+              <div><label>Izoh</label><input id="buyer-note" placeholder="Qo'shimcha talab..."/></div>
+            </div>
+            <button class="btn btn-primary" onclick="placeBuyerOrder()" style="width:100%">✅ Buyurtma Berish</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-buyer-orders">
+      <div class="card">
+        <div class="card-title"><span>📋</span> Mening Buyurtmalarim</div>
+        <table>
+          <thead><tr><th>#</th><th>Buyurtma</th><th>Tovarlar</th><th>Summa</th><th>Holat</th><th>Sana</th></tr></thead>
+          <tbody id="buyer-orders-table"></tbody>
+        </table>
+        <div id="buyer-orders-empty" class="empty-state"><div class="ei">📭</div><p>Buyurtma yo'q</p></div>
+      </div>
+    </div>
+
+    <!-- ========== ADMIN PANELI ========== -->
+    <div class="page" id="page-admin-dashboard">
+      <div class="grid4" style="margin-bottom:16px">
+        <div class="stat orange"><div class="stat-icon">📦</div><div class="stat-val" id="adm-products">0</div><div class="stat-label">Jami Tovarlar</div></div>
+        <div class="stat green"><div class="stat-icon">🏪</div><div class="stat-val" id="adm-sellers">0</div><div class="stat-label">Sotuvchilar</div></div>
+        <div class="stat blue"><div class="stat-icon">🛒</div><div class="stat-val" id="adm-buyers">0</div><div class="stat-label">Oluvchilar</div></div>
+        <div class="stat red"><div class="stat-icon">📋</div><div class="stat-val" id="adm-orders">0</div><div class="stat-label">Buyurtmalar</div></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title"><span>⏳</span> Tasdiqlash Kutilmoqda</div>
+          <div id="adm-pending-list"><div class="empty-state"><div class="ei">✅</div><p>Kutilayotgan tovar yo'q</p></div></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>📊</span> So'nggi Buyurtmalar</div>
+          <div id="adm-recent-orders"><div class="empty-state"><div class="ei">📋</div><p>Buyurtma yo'q</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-admin-products">
+      <div class="card">
+        <div class="card-title"><span>📦</span> Barcha Tovarlar — Boshqaruv</div>
+        <table>
+          <thead><tr><th>Rasm</th><th>Nomi</th><th>Sotuvchi</th><th>Kategoriya</th><th>Narx</th><th>Holat</th><th>Sana</th><th>Amal</th></tr></thead>
+          <tbody id="admin-products-table"></tbody>
+        </table>
+        <div id="admin-products-empty" class="empty-state"><div class="ei">📦</div><p>Tovar yo'q</p></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-admin-users">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title"><span>🏪</span> Sotuvchilar</div>
+          <table>
+            <thead><tr><th>#</th><th>Nomi</th><th>Tovarlar</th><th>Buyurtmalar</th><th>Ro'yxatdan o'tgan</th></tr></thead>
+            <tbody id="admin-sellers-table"></tbody>
+          </table>
+          <div id="admin-sellers-empty" class="empty-state"><div class="ei">🏪</div><p>Sotuvchi yo'q</p></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>🛒</span> Oluvchilar</div>
+          <table>
+            <thead><tr><th>#</th><th>Ismi</th><th>Telefon</th><th>Buyurtmalar</th><th>Ro'yxatdan o'tgan</th></tr></thead>
+            <tbody id="admin-buyers-table"></tbody>
+          </table>
+          <div id="admin-buyers-empty" class="empty-state"><div class="ei">🛒</div><p>Oluvchi yo'q</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-admin-orders">
+      <div class="card">
+        <div class="card-title"><span>📋</span> Barcha Buyurtmalar</div>
+        <table>
+          <thead><tr><th>#</th><th>Buyurtma</th><th>Oluvchi</th><th>Sotuvchi</th><th>Tovarlar</th><th>Summa</th><th>Holat</th><th>Sana</th><th>Amal</th></tr></thead>
+          <tbody id="admin-orders-table"></tbody>
+        </table>
+        <div id="admin-orders-empty" class="empty-state"><div class="ei">📭</div><p>Buyurtma yo'q</p></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-admin-settings">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title"><span>⚙️</span> Tizim Sozlamalari</div>
+          <div class="form-row">
+            <div><label>Tizim nomi</label><input id="sys-name" value="MebelPro"/></div>
+          </div>
+          <div class="form-row">
+            <div><label>Admin paroli</label><input id="sys-admin-pass" type="password" placeholder="Yangi parol"/></div>
+          </div>
+          <div class="form-row">
+            <div><label>Tovar avtomatik tasdiqlash</label>
+              <select id="sys-auto-approve">
+                <option value="0">Yo'q — admin tasdiqlashi kerak</option>
+                <option value="1">Ha — avtomatik tasdiqlansin</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveSettings()">💾 Saqlash</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>🗄️</span> Ma'lumotlar Boshqaruvi</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-secondary" onclick="exportData()">💾 Barcha ma'lumotlarni yuklab olish</button>
+            <button class="btn btn-secondary" onclick="importData()">📂 Ma'lumotlarni yuklash</button>
+            <input type="file" id="import-file" style="display:none" accept=".json" onchange="doImport(event)"/>
+            <button class="btn btn-danger" onclick="clearAllData()">🗑️ Barcha ma'lumotlarni tozalash</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div><!-- #app -->
+
+<div class="notif" id="notif"></div>
+
+<script>
+// ===================== STATE =====================
+let state = {
+  orders: [], clients: [], materials: [], fitings: [], kromkas: [],
+  parts: [], activeSheet: 0, cutResult: null,
+  products: [], buyerOrders: [], cart: [],
+  sellers: [], buyers: [], users: [],
+  settings: { adminPass: 'admin123', sysName: 'MebelPro', autoApprove: false },
+  currentRole: null, currentUser: null,
+  pendingImages: [null, null, null, null, null],
+};
+
+const STORAGE_KEY = 'mebelpro_v3';
+
+// ===================== PERSISTENCE =====================
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){ notify('Saqlash xatoligi!','#ef4444'); }
+}
+function loadState(){
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved){ const d = JSON.parse(saved); Object.assign(state, d); }
+  }catch(e){}
+  // Ensure pendingImages is always a 5-element array
+  if(!Array.isArray(state.pendingImages)) state.pendingImages = [null,null,null,null,null];
+}
+function persist(){ saveState(); }
+
+// ===================== UTILS =====================
+function $(id){ return document.getElementById(id) }
+function notify(msg, color='#22c55e'){
+  const n = $('notif'); n.textContent = msg; n.style.background = color; n.style.display='block';
+  setTimeout(()=>{ n.style.display='none' }, 2500);
+}
+function fmtNum(n){ return Number(n).toLocaleString('uz-UZ') }
+function today(){ return new Date().toLocaleDateString('uz-UZ') }
+function uid(){ return Date.now() + Math.random().toString(36).slice(2,6) }
+
+// Clock
+setInterval(()=>{
+  const el = $('clock');
+  if(el) el.textContent = new Date().toLocaleTimeString('uz-UZ');
+}, 1000);
+
+// ===================== ROLE / AUTH =====================
+const NAV_CONFIG = {
+  admin: [
+    { section: 'Admin Panel', items: [
+      { id: 'admin-dashboard', icon: '📊', label: 'Dashboard' },
+      { id: 'admin-products', icon: '📦', label: 'Tovarlar' },
+      { id: 'admin-users', icon: '👥', label: 'Foydalanuvchilar' },
+      { id: 'admin-orders', icon: '📋', label: 'Buyurtmalar' },
+      { id: 'admin-settings', icon: '⚙️', label: 'Sozlamalar' },
+    ]},
+    { section: 'Ishlab Chiqarish', items: [
+      { id: 'dashboard', icon: '🏭', label: 'Ishlab Chiqarish' },
+      { id: 'orders', icon: '📋', label: 'Buyurtmalar' },
+      { id: 'cutting', icon: '✂️', label: 'Kesish Optimizatori' },
+      { id: 'kromka', icon: '📏', label: 'Kromka Hisobi' },
+      { id: 'price', icon: '💰', label: 'Narx Kalkulyator' },
+      { id: 'fitings', icon: '🔩', label: 'Furnitura Hisobi' },
+      { id: 'materials', icon: '🗄️', label: 'Materiallar' },
+      { id: 'clients', icon: '👥', label: 'Mijozlar' },
+      { id: 'reports', icon: '📈', label: 'Hisobotlar' },
+    ]},
+  ],
+  seller: [
+    { section: 'Sotuvchi Panel', items: [
+      { id: 'seller-dashboard', icon: '📊', label: 'Dashboard' },
+      { id: 'seller-add', icon: '📷', label: "Tovar Qo'shish" },
+      { id: 'seller-products', icon: '📦', label: 'Mening Tovarlarim' },
+      { id: 'seller-orders', icon: '📋', label: 'Buyurtmalar' },
+    ]},
+  ],
+  buyer: [
+    { section: 'Oluvchi Panel', items: [
+      { id: 'buyer-catalog', icon: '🛒', label: 'Katalog' },
+      { id: 'buyer-cart', icon: '🛍️', label: 'Savatcha' },
+      { id: 'buyer-orders', icon: '📋', label: 'Mening Buyurtmalarim' },
+    ]},
+  ],
+};
+
+const pageMeta = {
+  dashboard: ['Dashboard','ISHLAB CHIQARISH'],
+  orders: ['Buyurtmalar','ISHLAB CHIQARISH'],
+  cutting: ['Kesish Optimizatori','HISOB-KITOB'],
+  kromka: ['Kromka Hisobi','HISOB-KITOB'],
+  price: ['Narx Kalkulyator','HISOB-KITOB'],
+  fitings: ['Furnitura Hisobi','HISOB-KITOB'],
+  materials: ['Materiallar','BOSHQARUV'],
+  clients: ['Mijozlar','BOSHQARUV'],
+  reports: ['Hisobotlar','BOSHQARUV'],
+  'seller-dashboard': ['Sotuvchi Dashboard','SOTUVCHI'],
+  'seller-add': ["Tovar Qo'shish",'SOTUVCHI'],
+  'seller-products': ['Mening Tovarlarim','SOTUVCHI'],
+  'seller-orders': ['Buyurtmalar','SOTUVCHI'],
+  'buyer-catalog': ['Mebel Katalogi','OLUVCHI'],
+  'buyer-cart': ['Savatcha','OLUVCHI'],
+  'buyer-orders': ['Mening Buyurtmalarim','OLUVCHI'],
+  'admin-dashboard': ['Admin Dashboard','ADMIN'],
+  'admin-products': ['Tovarlar Boshqaruvi','ADMIN'],
+  'admin-users': ['Foydalanuvchilar','ADMIN'],
+  'admin-orders': ['Barcha Buyurtmalar','ADMIN'],
+  'admin-settings': ['Tizim Sozlamalari','ADMIN'],
+};
+
+// ===================== AUTH =====================
+function switchAuthTab(tab){
+  ['login','register'].forEach(t=>{
+    $('auth-'+t).classList.toggle('active', t===tab);
+    $('tab-'+t).classList.toggle('active', t===tab);
+  });
+  // reset transient register UI
+  document.querySelectorAll('.auth-form .field-error').forEach(el=>el.classList.remove('field-error'));
+  const str=$('reg-pw-strength'); if(str) str.classList.remove('show');
+  const hint=$('reg-pw-hint'); if(hint) hint.textContent='';
+}
+
+// --- AUTH HELPERS ---
+function togglePw(id, btn){
+  const inp = $(id); if(!inp) return;
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁️';
+  btn.setAttribute('aria-label', show ? 'Parolni yashirish' : 'Parolni ko\'rsatish');
+}
+function clearFieldError(el){ el.classList.remove('field-error'); }
+function markError(el){ if(el){ el.classList.add('field-error'); el.focus(); } }
+function formatPhone(el){
+  clearFieldError(el);
+  let d = el.value.replace(/[^\d+]/g,'');
+  if(d && !d.startsWith('+')) d = '+' + d.replace(/\+/g,'');
+  el.value = d;
+}
+function validPhone(p){ return !p || /^\+?\d{7,15}$/.test(p.replace(/\s/g,'')); }
+function pwScore(pw){
+  let s=0;
+  if(pw.length>=4) s++;
+  if(pw.length>=8) s++;
+  if(/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++;
+  if(/\d/.test(pw)) s++;
+  if(/[^A-Za-z0-9]/.test(pw)) s++;
+  return Math.min(s,4);
+}
+function onPwInput(){
+  const pw = $('reg-password').value;
+  clearFieldError($('reg-password'));
+  const wrap=$('reg-pw-strength'), bar=$('reg-pw-bar'), hint=$('reg-pw-hint');
+  if(!pw){ wrap.classList.remove('show'); hint.textContent=''; return; }
+  wrap.classList.add('show');
+  const sc = pwScore(pw);
+  const levels=[
+    {w:'25%',c:'#f87171',t:'Zaif parol'},
+    {w:'50%',c:'#ffb627',t:'O\'rtacha parol'},
+    {w:'75%',c:'#60a5fa',t:'Yaxshi parol'},
+    {w:'100%',c:'#34d399',t:'Kuchli parol'},
+  ];
+  const lv = levels[Math.max(0,sc-1)];
+  bar.style.width=lv.w; bar.style.background=lv.c;
+  hint.textContent=lv.t; hint.style.color=lv.c;
+}
+
+function doLogin(){
+  const uEl=$('login-username'), pEl=$('login-password');
+  const username = uEl.value.trim().toLowerCase();
+  const password = pEl.value;
+  clearFieldError(uEl); clearFieldError(pEl);
+  if(!username){ notify('Foydalanuvchi nomini kiriting!','#ef4444'); markError(uEl); return; }
+  if(!password){ notify('Parolni kiriting!','#ef4444'); markError(pEl); return; }
+  const user = state.users.find(u => u.username === username && u.password === password);
+  if(!user){ notify('Login yoki parol noto\'g\'ri!','#ef4444'); markError(pEl); return; }
+  state.currentRole = 'buyer';
+  state.currentUser = { id: user.id, name: user.name, username: user.username, phone: user.phone||'' };
+  if(!state.buyers.find(b=>b.id===user.id)) state.buyers.push({id:user.id,name:user.name,phone:user.phone||'',date:user.date});
+  launchApp('buyer-catalog');
+}
+
+function doRegister(){
+  const nEl=$('reg-name'), phEl=$('reg-phone'), uEl=$('reg-username'), pEl=$('reg-password'), p2El=$('reg-password2');
+  const name     = nEl.value.trim();
+  const phone    = phEl.value.trim();
+  const username = uEl.value.trim().toLowerCase();
+  const password = pEl.value;
+  const password2= p2El.value;
+  [nEl,phEl,uEl,pEl,p2El].forEach(clearFieldError);
+  if(name.length < 2){ notify('Ismingizni to\'liq kiriting!','#ef4444'); markError(nEl); return; }
+  if(phone && !validPhone(phone)){ notify('Telefon raqam noto\'g\'ri! Masalan: +998901234567','#ef4444'); markError(phEl); return; }
+  if(!username){ notify('Foydalanuvchi nomi shart!','#ef4444'); markError(uEl); return; }
+  if(username.length < 3){ notify('Foydalanuvchi nomi kamida 3 belgi bo\'lishi kerak!','#ef4444'); markError(uEl); return; }
+  if(!/^[a-z0-9_]+$/.test(username)){ notify('Foydalanuvchi nomi faqat lotin harflari, raqam va _ belgisidan iborat!','#ef4444'); markError(uEl); return; }
+  if(state.users.find(u => u.username === username)){ notify('Bu foydalanuvchi nomi band! Boshqa nom tanlang.','#ef4444'); markError(uEl); return; }
+  if(!password || password.length < 4){ notify('Parol kamida 4 belgi bo\'lishi kerak!','#ef4444'); markError(pEl); return; }
+  if(password !== password2){ notify('Parollar mos kelmadi!','#ef4444'); markError(p2El); return; }
+  const user = { id: uid(), name, phone, username, password, date: today() };
+  state.users.push(user);
+  state.currentRole = 'buyer';
+  state.currentUser = { id: user.id, name: user.name, username: user.username, phone: user.phone };
+  if(!state.buyers.find(b=>b.id===user.id)) state.buyers.push({id:user.id,name:user.name,phone:user.phone,date:user.date});
+  persist();
+  // clear form
+  [nEl,phEl,uEl,pEl,p2El].forEach(el=>el.value='');
+  $('reg-pw-strength').classList.remove('show'); $('reg-pw-hint').textContent='';
+  notify('✅ Muvaffaqiyatli ro\'yxatdan o\'tdingiz!');
+  launchApp('buyer-catalog');
+}
+
+function openAdminModal(){
+  $('admin-modal').style.display = 'flex';
+  setTimeout(()=>$('admin-pass').focus(), 50);
+}
+function closeAdminModal(){
+  $('admin-modal').style.display = 'none';
+  $('admin-pass').value = '';
+}
+function doAdminLogin(){
+  const passEl = $('admin-pass');
+  const pass = passEl.value;
+  clearFieldError(passEl);
+  if(pass !== state.settings.adminPass){ notify('Admin paroli noto\'g\'ri!','#ef4444'); markError(passEl); return; }
+  state.currentRole = 'admin';
+  state.currentUser = { id: 'admin', name: 'Administrator', username: 'admin' };
+  closeAdminModal();
+  launchApp('admin-dashboard');
+}
+
+function launchApp(firstPage){
+  persist();
+  $('role-screen').style.display = 'none';
+  $('app').classList.add('active');
+  buildNav();
+  updateUserInfo();
+  showPage(firstPage);
+}
+
+// === SELLER MODAL ===
+function openSellerModal(){
+  $('seller-modal').style.display = 'flex';
+  setTimeout(()=>$('firma-name').focus(), 50);
+}
+function closeSellerModal(){
+  $('seller-modal').style.display = 'none';
+  $('firma-name').value = '';
+  $('firma-pass').value = '';
+}
+
+function becomeSeller(){
+  const nEl=$('firma-name'), pEl=$('firma-pass');
+  const firmaName = nEl.value.trim();
+  const firmaPass = pEl.value;
+  clearFieldError(nEl); clearFieldError(pEl);
+  if(!firmaName){ notify('Firma nomini kiriting!','#ef4444'); markError(nEl); return; }
+  if(!firmaPass || firmaPass.length < 4){ notify('Firma paroli kamida 4 belgi bo\'lishi kerak!','#ef4444'); markError(pEl); return; }
+  const existing = state.sellers.find(s => s.firmaName.toLowerCase() === firmaName.toLowerCase());
+  if(existing){
+    if(existing.firmaPass !== firmaPass){ notify('Firma paroli noto\'g\'ri!','#ef4444'); markError(pEl); return; }
+    state.currentUser = { ...state.currentUser, firmaName: existing.firmaName, sellerId: existing.id };
+    state.currentRole = 'seller';
+    closeSellerModal();
+    persist(); buildNav(); updateUserInfo();
+    notify('✅ ' + firmaName + ' firmasiga kirildi!');
+    showPage('seller-dashboard');
+  } else {
+    const newSeller = { id: uid(), firmaName, firmaPass, name: firmaName, date: today() };
+    state.sellers.push(newSeller);
+    state.currentUser = { ...state.currentUser, firmaName, name: firmaName, sellerId: newSeller.id };
+    state.currentRole = 'seller';
+    closeSellerModal();
+    persist(); buildNav(); updateUserInfo();
+    notify('🎉 "' + firmaName + '" firmasi ro\'yxatdan o\'tdi!');
+    showPage('seller-dashboard');
+  }
+}
+
+function switchToBuyer(){
+  state.currentRole = 'buyer';
+  // Restore buyer name from users list
+  const u = state.users.find(x=>x.id===state.currentUser.id);
+  if(u) state.currentUser = { id: u.id, name: u.name, username: u.username, phone: u.phone||'' };
+  persist(); buildNav(); updateUserInfo();
+  showPage('buyer-catalog');
+}
+
+function logout(){
+  state.currentRole = null;
+  state.currentUser = null;
+  state.cart = [];
+  persist();
+  $('app').classList.remove('active');
+  $('role-screen').style.display = 'flex';
+  $('login-username').value = '';
+  $('login-password').value = '';
+  switchAuthTab('login');
+  updateTopbarButtons();
+}
+
+function buildNav(){
+  const nav = $('sidebar-nav');
+  const config = NAV_CONFIG[state.currentRole] || [];
+  nav.innerHTML = config.map(section=>`
+    <div class="nav-section">${section.section}</div>
+    ${section.items.map(item=>`
+      <div class="nav-item" data-page="${item.id}" onclick="showPage('${item.id}')">
+        <span class="nav-icon">${item.icon}</span> ${item.label}
+      </div>`).join('')}
+  `).join('');
+  updateTopbarButtons();
+}
+
+function updateTopbarButtons(){
+  const role = state.currentRole;
+  const sellerBtn = $('btn-seller-mode');
+  const buyerBtn  = $('btn-buyer-mode');
+  if(!sellerBtn || !buyerBtn) return;
+  // Seller button: show when buyer or when no role (hide for admin)
+  sellerBtn.style.display = (role==='buyer') ? 'inline-flex' : 'none';
+  // If user already has a firma registered, update button text
+  if(role==='buyer' && state.currentUser?.sellerId){
+    const firma = state.sellers.find(s=>s.id===state.currentUser.sellerId);
+    sellerBtn.textContent = firma ? '🏪 ' + firma.firmaName : '🏪 Sotuvchi bo\'lish';
+  } else if(role==='buyer'){
+    sellerBtn.textContent = '🏪 Sotuvchi bo\'lish';
+  }
+  // Buyer button: show when seller (but not admin)
+  buyerBtn.style.display = (role==='seller') ? 'inline-flex' : 'none';
+}
+
+function updateUserInfo(){
+  const u = state.currentUser;
+  if(!u) return;
+  const displayName = state.currentRole==='seller' ? (u.firmaName||u.name) : u.name;
+  $('sidebar-user').innerHTML = `
+    <strong style="color:var(--text);font-size:13px">${displayName}</strong><br>
+    ${u.username ? `<span style="font-size:11px;color:var(--muted)">@${u.username}</span>` : ''}
+  `;
+  const badge = $('role-badge-top');
+  badge.textContent = {admin:'ADMIN',seller:'SOTUVCHI',buyer:'OLUVCHI'}[state.currentRole] || '';
+  badge.className = 'role-badge ' + (state.currentRole||'');
+  updateTopbarButtons();
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const page = $('page-'+id);
+  if(page) page.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.dataset.page===id) n.classList.add('active');
+  });
+  $('page-title').textContent = pageMeta[id]?.[0] || id;
+  $('page-badge').textContent = pageMeta[id]?.[1] || '';
+  // Page-specific updates
+  if(id==='dashboard') updateDashboard();
+  if(id==='reports') updateReports();
+  if(id==='seller-dashboard') updateSellerDashboard();
+  if(id==='seller-products') renderSellerProducts();
+  if(id==='seller-orders') renderSellerOrders();
+  if(id==='buyer-catalog') renderCatalog();
+  if(id==='buyer-cart') renderCart();
+  if(id==='buyer-orders') renderBuyerOrders();
+  if(id==='admin-dashboard') updateAdminDashboard();
+  if(id==='admin-products') renderAdminProducts();
+  if(id==='admin-users') renderAdminUsers();
+  if(id==='admin-orders') renderAdminOrders();
+  if(id==='admin-settings') loadSettingsForm();
+}
+
+// ===================== PRODUCTS (SELLER) =====================
+function handleImageUpload(e, idx){
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 2*1024*1024){ notify('Rasm 2MB dan katta!','#ef4444'); return; }
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    state.pendingImages[idx] = ev.target.result;
+    setSlotImage(idx, ev.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function setSlotImage(idx, src){
+  const slot = $('slot-'+idx);
+  if(!slot) return;
+  // Remove existing preview img if any
+  slot.querySelectorAll('img').forEach(el=>el.remove());
+  const img = document.createElement('img');
+  img.src = src;
+  slot.insertBefore(img, slot.firstChild);
+  slot.classList.add('has-img');
+}
+
+function removeSlotImage(e, idx){
+  e.stopPropagation();
+  state.pendingImages[idx] = null;
+  const slot = $('slot-'+idx);
+  slot.querySelectorAll('img').forEach(el=>el.remove());
+  slot.classList.remove('has-img');
+  $('img-input-'+idx).value = '';
+}
+
+function slotDragOver(e, idx){
+  e.preventDefault();
+  $('slot-'+idx).classList.add('dragover');
+}
+function slotDragLeave(e, idx){
+  $('slot-'+idx).classList.remove('dragover');
+}
+function slotDrop(e, idx){
+  e.preventDefault();
+  $('slot-'+idx).classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if(file && file.type.startsWith('image/')){
+    if(file.size > 2*1024*1024){ notify('Rasm 2MB dan katta!','#ef4444'); return; }
+    const reader = new FileReader();
+    reader.onload = ev=>{ state.pendingImages[idx] = ev.target.result; setSlotImage(idx, ev.target.result); };
+    reader.readAsDataURL(file);
+  }
+}
+
+function resetImageSlots(){
+  for(let i=0;i<5;i++){
+    state.pendingImages[i] = null;
+    const slot = $('slot-'+i);
+    if(slot){ slot.querySelectorAll('img').forEach(el=>el.remove()); slot.classList.remove('has-img'); }
+    const inp = $('img-input-'+i);
+    if(inp) inp.value = '';
+  }
+}
+
+function addProduct(){
+  const name = $('prod-name').value.trim();
+  const price = +$('prod-price').value;
+  if(!name || !price){ notify('Nom va narx shart!','#ef4444'); return; }
+  const images = state.pendingImages.filter(Boolean);
+  if(!images.length){ notify('Kamida 1 ta tovar rasmini yuklang!','#ef4444'); return; }
+  const autoApprove = state.settings.autoApprove;
+  const firmaName = state.currentUser.firmaName || state.currentUser.name;
+  state.products.push({
+    id: uid(),
+    sellerId: state.currentUser.sellerId || state.currentUser.id,
+    sellerName: firmaName,
+    name, price,
+    category: $('prod-cat').value,
+    size: $('prod-size').value,
+    desc: $('prod-desc').value,
+    images: images,
+    image: images[0],
+    status: autoApprove ? 'approved' : 'pending',
+    date: today(),
+  });
+  resetImageSlots();
+  ['prod-name','prod-price','prod-size','prod-desc'].forEach(id=>$(id).value='');
+  persist();
+  notify(autoApprove ? '✅ Tovar katalogga qo\'shildi!' : '✅ Tovar yuborildi — admin tasdiqlashi kutilmoqda!');
+  showPage('seller-products');
+}
+
+function getMyProducts(){
+  const u = state.currentUser;
+  if(!u) return [];
+  const firmaName = u.firmaName || u.name;
+  return state.products.filter(p => p.sellerId === u.sellerId || p.sellerName === firmaName || p.sellerId === u.id);
+}
+
+function productStatusTag(s){
+  const map = {pending:'<span class="tag tag-orange">⏳ Kutilmoqda</span>',approved:'<span class="tag tag-green">✅ Tasdiqlangan</span>',rejected:'<span class="tag tag-red">❌ Rad etilgan</span>'};
+  return map[s]||s;
+}
+
+function updateSellerDashboard(){
+  const mine = getMyProducts();
+  $('sel-products').textContent = mine.length;
+  $('sel-approved').textContent = mine.filter(p=>p.status==='approved').length;
+  const u = state.currentUser;
+  const firmaName = u?.firmaName || u?.name;
+  const myOrders = state.buyerOrders.filter(o=>o.sellerId===u?.sellerId || o.sellerName===firmaName || o.sellerId===u?.id);
+  $('sel-orders').textContent = myOrders.length;
+  $('sel-revenue').textContent = fmtNum(myOrders.filter(o=>o.status==='yetkazildi').reduce((s,o)=>s+o.total,0));
+  const recent = mine.slice(-4).reverse();
+  $('sel-recent-products').innerHTML = recent.length ? `<div class="product-grid">${recent.map(p=>productCardHTML(p,false)).join('')}</div>` : '<div class="empty-state"><div class="ei">📦</div><p>Hali tovar qo\'shmadingiz</p></div>';
+}
+
+function renderSellerProducts(){
+  const mine = getMyProducts();
+  const el = $('seller-products-list');
+  if(!mine.length){ el.innerHTML='<div class="empty-state"><div class="ei">📦</div><p>Tovar qo\'shing</p></div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Rasmlar</th><th>Nomi</th><th>Kategoriya</th><th>Narx</th><th>Holat</th><th>Sana</th><th></th></tr></thead><tbody>`+
+    mine.map(p=>{
+      const imgs = p.images || (p.image?[p.image]:[]);
+      const thumbs = imgs.slice(0,5).map(src=>`<img src="${src}" style="width:38px;height:38px;object-fit:cover;border-radius:5px;border:1px solid var(--border);cursor:pointer" onclick="previewImg(this)"/>`).join('');
+      return `<tr>
+        <td><div style="display:flex;gap:4px;align-items:center">${thumbs||'📦'}</div></td>
+        <td><strong>${p.name}</strong></td><td>${p.category}</td>
+        <td>${fmtNum(p.price)} so'm</td><td>${productStatusTag(p.status)}</td><td>${p.date}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">✕</button></td>
+      </tr>`;
+    }).join('')+`</tbody></table>`;
+}
+
+function deleteProduct(id){
+  if(!confirm('Tovar o\'chirilsinmi?')) return;
+  state.products = state.products.filter(p=>p.id!==id);
+  persist(); notify('🗑️ O\'chirildi','#ef4444');
+  renderSellerProducts(); updateSellerDashboard();
+}
+
+function renderSellerOrders(){
+  const u = state.currentUser;
+  const firmaName = u?.firmaName || u?.name;
+  const mine = state.buyerOrders.filter(o=>o.sellerId===u?.sellerId || o.sellerName===firmaName || o.sellerId===u?.id);
+  const tbody = $('seller-orders-table');
+  if(!mine.length){ tbody.innerHTML=''; $('seller-orders-empty').style.display='block'; return; }
+  $('seller-orders-empty').style.display='none';
+  const statusMap = {yangi:'🔵 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'🟢 Tayyor',yetkazildi:'✅ Yetkazildi'};
+  tbody.innerHTML = mine.map((o,i)=>`<tr>
+    <td>${i+1}</td><td><strong>${o.num}</strong></td><td>${o.buyerName}</td>
+    <td>${o.buyerPhone||'—'}</td><td>${o.items.map(it=>it.name).join(', ')}</td>
+    <td>${fmtNum(o.total)} so'm</td>
+    <td><span class="tag tag-blue">${statusMap[o.status]||o.status}</span></td><td>${o.date}</td>
+    <td><select class="btn btn-secondary btn-sm" onchange="changeBuyerOrderStatus('${o.id}',this.value)" style="width:auto;padding:4px 8px">
+      <option value="yangi" ${o.status==='yangi'?'selected':''}>Yangi</option>
+      <option value="jarayonda" ${o.status==='jarayonda'?'selected':''}>Jarayonda</option>
+      <option value="tayyor" ${o.status==='tayyor'?'selected':''}>Tayyor</option>
+      <option value="yetkazildi" ${o.status==='yetkazildi'?'selected':''}>Yetkazildi</option>
+    </select></td>
+  </tr>`).join('');
+}
+
+function changeBuyerOrderStatus(id, status){
+  const o = state.buyerOrders.find(x=>x.id===id);
+  if(o){ o.status=status; persist(); notify('Holat yangilandi!'); }
+}
+
+// ===================== BUYER =====================
+function getProductImg(p){ return (p.images&&p.images[0]) || p.image || null; }
+
+function productCardHTML(p, showBuy=true){
+  const mainImg = getProductImg(p);
+  const imgs = p.images || (p.image ? [p.image] : []);
+  const thumbsHTML = imgs.length > 1 ? `<div style="display:flex;gap:4px;padding:6px 8px 0;overflow-x:auto">${imgs.slice(0,5).map((src,i)=>`<img src="${src}" onclick="previewImg(this)" style="width:36px;height:36px;object-fit:cover;border-radius:5px;cursor:pointer;border:${i===0?'2px solid var(--accent)':'1px solid var(--border)'}"/>`).join('')}</div>` : '';
+  return `<div class="product-card">
+    <div class="product-img">${mainImg?`<img src="${mainImg}" alt="${p.name}" style="cursor:pointer" onclick="previewImg(this)"/>`:'🪑'}</div>
+    ${thumbsHTML}
+    <div class="product-body">
+      <h4>${p.name}</h4>
+      <div class="seller">🏪 ${p.sellerName}</div>
+      <div class="price">${fmtNum(p.price)} so'm</div>
+      ${p.size?`<div style="font-size:11px;color:var(--muted)">📐 ${p.size}</div>`:''}
+      ${p.desc?`<div class="desc">${p.desc}</div>`:''}
+      ${showBuy?`<button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="addToCart('${p.id}')">🛒 Savatchaga</button>`:''}
+    </div>
+  </div>`;
+}
+
+function previewImg(imgEl){
+  const overlay = document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99999;display:flex;align-items:center;justify-content:center;cursor:zoom-out';
+  const img = document.createElement('img');
+  img.src = imgEl.src;
+  img.style.cssText='max-width:90vw;max-height:88vh;border-radius:12px;object-fit:contain;box-shadow:0 8px 48px rgba(0,0,0,.6)';
+  overlay.appendChild(img);
+  overlay.onclick=()=>overlay.remove();
+  document.body.appendChild(overlay);
+}
+
+function renderCatalog(){
+  const search = ($('buyer-search')?.value||'').toLowerCase();
+  const cat = $('buyer-filter-cat')?.value||'';
+  let products = state.products.filter(p=>p.status==='approved');
+  if(search) products = products.filter(p=>p.name.toLowerCase().includes(search)||p.desc?.toLowerCase().includes(search));
+  if(cat) products = products.filter(p=>p.category===cat);
+  const grid = $('catalog-grid');
+  grid.innerHTML = products.length ? products.map(p=>productCardHTML(p)).join('') : '<div class="empty-state" style="grid-column:1/-1"><div class="ei">🛒</div><p>Tovar topilmadi</p></div>';
+}
+
+function addToCart(productId){
+  const p = state.products.find(x=>x.id===productId);
+  if(!p) return;
+  const existing = state.cart.find(c=>c.productId===productId);
+  if(existing) existing.qty++;
+  else state.cart.push({ productId, name:p.name, price:p.price, sellerId:p.sellerId, sellerName:p.sellerName, image:(p.images&&p.images[0])||p.image, qty:1 });
+  persist(); notify('🛒 Savatchaga qo\'shildi!');
+}
+
+function renderCart(){
+  const items = state.cart;
+  const itemsEl = $('cart-items');
+  const summaryEl = $('cart-summary');
+  const checkoutEl = $('cart-checkout');
+  if(!items.length){
+    itemsEl.innerHTML='<div class="empty-state"><div class="ei">🛒</div><p>Savatcha bo\'sh</p></div>';
+    summaryEl.innerHTML='<div class="empty-state"><div class="ei">💳</div><p>Avval savatchaga tovar qo\'shing</p></div>';
+    checkoutEl.style.display='none'; return;
+  }
+  itemsEl.innerHTML = items.map((it,i)=>`<div class="cart-item">
+    ${it.image?`<img src="${it.image}"/>`:'<div style="width:60px;height:60px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center">🪑</div>'}
+    <div class="cart-item-info"><h5>${it.name}</h5><span>${fmtNum(it.price)} so'm × ${it.qty}</span><br><span>🏪 ${it.sellerName}</span></div>
+    <div style="display:flex;gap:4px;align-items:center">
+      <button class="btn btn-secondary btn-sm" onclick="changeCartQty(${i},-1)">−</button>
+      <span>${it.qty}</span>
+      <button class="btn btn-secondary btn-sm" onclick="changeCartQty(${i},1)">+</button>
+      <button class="btn btn-danger btn-sm" onclick="removeFromCart(${i})">✕</button>
+    </div>
+  </div>`).join('');
+  const total = items.reduce((s,it)=>s+it.price*it.qty,0);
+  summaryEl.innerHTML = `<div style="padding:16px;background:rgba(240,165,0,.1);border-radius:12px;border:1px solid rgba(240,165,0,.2)">
+    <div style="font-size:12px;color:var(--muted);text-transform:uppercase">Jami summa</div>
+    <div style="font-size:28px;font-weight:800;color:var(--accent)">${fmtNum(total)} so'm</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">${items.length} ta turdagi tovar</div>
+  </div>`;
+  checkoutEl.style.display='block';
+}
+
+function changeCartQty(i, delta){
+  state.cart[i].qty = Math.max(1, state.cart[i].qty + delta);
+  persist(); renderCart();
+}
+function removeFromCart(i){ state.cart.splice(i,1); persist(); renderCart(); notify('O\'chirildi','#ef4444'); }
+
+function placeBuyerOrder(){
+  if(!state.cart.length){ notify('Savatcha bo\'sh!','#ef4444'); return; }
+  const addr = $('buyer-addr')?.value||'';
+  const note = $('buyer-note')?.value||'';
+  // Group by seller
+  const bySeller = {};
+  state.cart.forEach(it=>{
+    const key = it.sellerId||it.sellerName;
+    if(!bySeller[key]) bySeller[key]={sellerId:it.sellerId,sellerName:it.sellerName,items:[],total:0};
+    bySeller[key].items.push({...it});
+    bySeller[key].total += it.price*it.qty;
+  });
+  Object.values(bySeller).forEach(group=>{
+    state.buyerOrders.push({
+      id: uid(), num: 'ORD-'+Date.now().toString().slice(-6),
+      buyerId: state.currentUser.id, buyerName: state.currentUser.name,
+      buyerPhone: state.currentUser.phone||'',
+      sellerId: group.sellerId, sellerName: group.sellerName,
+      items: group.items, total: group.total,
+      addr, note, status: 'yangi', date: today(),
+    });
+  });
+  state.cart = [];
+  persist();
+  ['buyer-addr','buyer-note'].forEach(id=>{ if($(id)) $(id).value=''; });
+  notify('✅ Buyurtma muvaffaqiyatli berildi!');
+  showPage('buyer-orders');
+}
+
+function renderBuyerOrders(){
+  const u = state.currentUser;
+  const mine = state.buyerOrders.filter(o=>o.buyerId===u?.id || o.buyerName===u?.name);
+  const tbody = $('buyer-orders-table');
+  if(!mine.length){ tbody.innerHTML=''; $('buyer-orders-empty').style.display='block'; return; }
+  $('buyer-orders-empty').style.display='none';
+  const statusMap = {yangi:'🔵 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'🟢 Tayyor',yetkazildi:'✅ Yetkazildi'};
+  tbody.innerHTML = mine.map((o,i)=>`<tr>
+    <td>${i+1}</td><td><strong>${o.num}</strong></td>
+    <td>${o.items.map(it=>`${it.name} ×${it.qty}`).join(', ')}</td>
+    <td>${fmtNum(o.total)} so'm</td>
+    <td><span class="tag tag-blue">${statusMap[o.status]||o.status}</span></td><td>${o.date}</td>
+  </tr>`).join('');
+}
+
+// ===================== ADMIN =====================
+function updateAdminDashboard(){
+  $('adm-products').textContent = state.products.length;
+  $('adm-sellers').textContent = state.sellers.length;
+  $('adm-buyers').textContent = state.buyers.length;
+  $('adm-orders').textContent = state.buyerOrders.length;
+  const pending = state.products.filter(p=>p.status==='pending');
+  $('adm-pending-list').innerHTML = pending.length ? pending.map(p=>`
+    <div style="display:flex;gap:12px;align-items:center;padding:10px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:8px">
+      ${p.image||p.images?`<img src="${(p.images&&p.images[0])||p.image}" style="width:50px;height:50px;object-fit:cover;border-radius:6px"/>`:'📦'}
+      <div style="flex:1"><strong>${p.name}</strong><br><span style="font-size:11px;color:var(--muted)">${p.sellerName} • ${fmtNum(p.price)} so'm</span></div>
+      <button class="btn btn-green btn-sm" onclick="approveProduct('${p.id}')">✅</button>
+      <button class="btn btn-danger btn-sm" onclick="rejectProduct('${p.id}')">✕</button>
+    </div>`).join('') : '<div class="empty-state"><div class="ei">✅</div><p>Kutilayotgan tovar yo\'q</p></div>';
+  const recent = state.buyerOrders.slice(-5).reverse();
+  $('adm-recent-orders').innerHTML = recent.length ? recent.map(o=>`
+    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+      <span><strong>${o.num}</strong> — ${o.buyerName}</span>
+      <span style="color:var(--accent)">${fmtNum(o.total)} so'm</span>
+    </div>`).join('') : '<div class="empty-state"><div class="ei">📋</div><p>Buyurtma yo\'q</p></div>';
+}
+
+function renderAdminProducts(){
+  const tbody = $('admin-products-table');
+  if(!state.products.length){ tbody.innerHTML=''; $('admin-products-empty').style.display='block'; return; }
+  $('admin-products-empty').style.display='none';
+  tbody.innerHTML = state.products.map(p=>`<tr>
+    <td>${(p.image||p.images)?`<img src="${(p.images&&p.images[0])||p.image}" style="width:50px;height:50px;object-fit:cover;border-radius:6px"/>`:'📦'}</td>
+    <td><strong>${p.name}</strong></td><td>${p.sellerName}</td><td>${p.category}</td>
+    <td>${fmtNum(p.price)} so'm</td><td>${productStatusTag(p.status)}</td><td>${p.date}</td>
+    <td style="white-space:nowrap">
+      ${p.status!=='approved'?`<button class="btn btn-green btn-sm" onclick="approveProduct('${p.id}')">✅</button>`:''}
+      ${p.status!=='rejected'?`<button class="btn btn-danger btn-sm" onclick="rejectProduct('${p.id}')">✕</button>`:''}
+      <button class="btn btn-danger btn-sm" onclick="adminDeleteProduct('${p.id}')">🗑️</button>
+    </td>
+  </tr>`).join('');
+}
+
+function approveProduct(id){
+  const p = state.products.find(x=>x.id===id);
+  if(p){ p.status='approved'; persist(); notify('✅ Tovar tasdiqlandi!'); updateAdminDashboard(); renderAdminProducts(); }
+}
+function rejectProduct(id){
+  const p = state.products.find(x=>x.id===id);
+  if(p){ p.status='rejected'; persist(); notify('❌ Tovar rad etildi','#ef4444'); updateAdminDashboard(); renderAdminProducts(); }
+}
+function adminDeleteProduct(id){
+  if(!confirm('O\'chirilsinmi?')) return;
+  state.products = state.products.filter(p=>p.id!==id);
+  persist(); renderAdminProducts(); updateAdminDashboard(); notify('🗑️ O\'chirildi','#ef4444');
+}
+
+function renderAdminUsers(){
+  const st = $('admin-sellers-table'), bt = $('admin-buyers-table');
+  if(!state.sellers.length){ st.innerHTML=''; $('admin-sellers-empty').style.display='block'; }
+  else{
+    $('admin-sellers-empty').style.display='none';
+    st.innerHTML = state.sellers.map((s,i)=>{
+      const prods = state.products.filter(p=>p.sellerName===s.name).length;
+      const ords = state.buyerOrders.filter(o=>o.sellerName===s.name).length;
+      return `<tr><td>${i+1}</td><td><strong>${s.name}</strong></td><td>${prods}</td><td>${ords}</td><td>${s.date}</td></tr>`;
+    }).join('');
+  }
+  if(!state.buyers.length){ bt.innerHTML=''; $('admin-buyers-empty').style.display='block'; }
+  else{
+    $('admin-buyers-empty').style.display='none';
+    bt.innerHTML = state.buyers.map((b,i)=>{
+      const ords = state.buyerOrders.filter(o=>o.buyerName===b.name).length;
+      return `<tr><td>${i+1}</td><td><strong>${b.name}</strong></td><td>${b.phone||'—'}</td><td>${ords}</td><td>${b.date}</td></tr>`;
+    }).join('');
+  }
+}
+
+function renderAdminOrders(){
+  const tbody = $('admin-orders-table');
+  if(!state.buyerOrders.length){ tbody.innerHTML=''; $('admin-orders-empty').style.display='block'; return; }
+  $('admin-orders-empty').style.display='none';
+  const statusMap = {yangi:'🔵 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'🟢 Tayyor',yetkazildi:'✅ Yetkazildi'};
+  tbody.innerHTML = state.buyerOrders.map((o,i)=>`<tr>
+    <td>${i+1}</td><td><strong>${o.num}</strong></td><td>${o.buyerName}</td><td>${o.sellerName}</td>
+    <td>${o.items.map(it=>`${it.name}×${it.qty}`).join(', ')}</td>
+    <td>${fmtNum(o.total)} so'm</td>
+    <td><span class="tag tag-blue">${statusMap[o.status]||o.status}</span></td><td>${o.date}</td>
+    <td><select class="btn btn-secondary btn-sm" onchange="changeBuyerOrderStatus('${o.id}',this.value)" style="width:auto;padding:4px 8px">
+      <option value="yangi" ${o.status==='yangi'?'selected':''}>Yangi</option>
+      <option value="jarayonda" ${o.status==='jarayonda'?'selected':''}>Jarayonda</option>
+      <option value="tayyor" ${o.status==='tayyor'?'selected':''}>Tayyor</option>
+      <option value="yetkazildi" ${o.status==='yetkazildi'?'selected':''}>Yetkazildi</option>
+    </select></td>
+  </tr>`).join('');
+}
+
+function loadSettingsForm(){
+  $('sys-name').value = state.settings.sysName||'MebelPro';
+  $('sys-auto-approve').value = state.settings.autoApprove ? '1' : '0';
+}
+function saveSettings(){
+  state.settings.sysName = $('sys-name').value;
+  if($('sys-admin-pass').value) state.settings.adminPass = $('sys-admin-pass').value;
+  state.settings.autoApprove = $('sys-auto-approve').value==='1';
+  persist(); notify('✅ Sozlamalar saqlandi!');
+}
+function clearAllData(){
+  if(!confirm('BARCHA ma\'lumotlar o\'chirilsinmi? Bu qaytarib bo\'lmaydi!')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state = { orders:[], clients:[], materials:[], fitings:[], kromkas:[], parts:[], activeSheet:0, cutResult:null,
+    products:[], buyerOrders:[], cart:[], sellers:[], buyers:[],
+    settings:{adminPass:'admin123',sysName:'MebelPro',autoApprove:false}, currentRole:null, currentUser:null, pendingImages:[null,null,null,null,null], users:[] };
+  notify('🗑️ Ma\'lumotlar tozalandi','#ef4444');
+  logout();
+}
+
+// Drag & drop handled via inline slot event handlers
+
+// ===================== ORDERS =====================
+function addOrder(){
+  const num = $('ord-num').value.trim();
+  const client = $('ord-client').value.trim();
+  if(!num || !client){ notify('Buyurtma raqami va mijoz ismi shart!','#ef4444'); return; }
+  state.orders.push({
+    id: uid(), num, client,
+    phone: $('ord-phone').value,
+    name: $('ord-name').value || 'Nomsiz',
+    price: +$('ord-price').value || 0,
+    status: $('ord-status').value,
+    note: $('ord-note').value,
+    date: today(),
+  });
+  ['ord-num','ord-client','ord-phone','ord-name','ord-price','ord-note'].forEach(id=>$(id).value='');
+  renderOrders(); persist(); notify('✅ Buyurtma qo\'shildi!');
+}
+function renderOrders(){
+  const tbody = $('orders-table');
+  if(!state.orders.length){ tbody.innerHTML=''; $('orders-empty').style.display='block'; return; }
+  $('orders-empty').style.display='none';
+  const statusMap = {yangi:'🔵 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'🟢 Tayyor',yetkazildi:'✅ Yetkazildi'};
+  const tagMap = {yangi:'tag-blue',jarayonda:'tag-orange',tayyor:'tag-green',yetkazildi:'tag-green'};
+  tbody.innerHTML = state.orders.map((o,i)=>`
+    <tr>
+      <td>${i+1}</td><td><strong>${o.num}</strong></td><td>${o.client}</td>
+      <td>${o.phone||'—'}</td><td>${o.name}</td>
+      <td>${fmtNum(o.price)} so'm</td>
+      <td><span class="tag ${tagMap[o.status]}">${statusMap[o.status]}</span></td>
+      <td>${o.date}</td>
+      <td>
+        <select class="btn btn-secondary btn-sm" onchange="changeOrderStatus('${o.id}',this.value)" style="width:auto;padding:4px 8px">
+          <option value="yangi" ${o.status==='yangi'?'selected':''}>Yangi</option>
+          <option value="jarayonda" ${o.status==='jarayonda'?'selected':''}>Jarayonda</option>
+          <option value="tayyor" ${o.status==='tayyor'?'selected':''}>Tayyor</option>
+          <option value="yetkazildi" ${o.status==='yetkazildi'?'selected':''}>Yetkazildi</option>
+        </select>
+        <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')">✕</button>
+      </td>
+    </tr>`).join('');
+}
+function changeOrderStatus(id, status){ const o = state.orders.find(x=>x.id===id); if(o){ o.status = status; renderOrders(); persist(); } }
+function deleteOrder(id){ if(confirm('O\'chirilsinmi?')){ state.orders = state.orders.filter(x=>x.id!==id); renderOrders(); persist(); notify('🗑️ O\'chirildi','#ef4444'); } }
+
+// ===================== CUTTING OPTIMIZER =====================
+const COLORS=['#E8A87C','#85C1E9','#82E0AA','#F1948A','#BB8FCE','#F8C471','#76D7C4','#F0B27A','#AED6F1','#A9DFBF','#F1948A','#D2B4DE','#A3E4D7','#FAD7A0','#A9CCE3'];
+let colorIdx = 0;
+
+function applySheetPreset(){
+  const val = $('sheet-preset').value;
+  $('custom-sheet').style.display = val==='custom'?'grid':'none';
+  if(val!=='custom'){ const [w,h]=val.split(','); $('sheet-w').value=w; $('sheet-h').value=h; }
+}
+function getSheet(){ return { w: +$('sheet-w').value||2750, h: +$('sheet-h').value||1830 }; }
+function getSaw(){ return +$('saw-w').value||4; }
+
+function addPart(){
+  const name=$('part-name').value.trim(), w=+$('part-w').value, h=+$('part-h').value, qty=+$('part-qty').value||1;
+  if(!name||!w||!h){ notify('Nomi, eni va bo\'yi shart!','#ef4444'); return; }
+  state.parts.push({ id:uid(), name, w, h, qty, color:$('part-color').value||'', krom:+$('part-krom').value||1, kromSides:+$('part-krom-sides').value||0, fill:COLORS[colorIdx++%COLORS.length] });
+  ['part-name','part-w','part-h','part-color'].forEach(id=>$(id).value='');
+  $('part-qty').value=1;
+  renderParts();
+}
+function renderParts(){
+  $('parts-count').textContent = state.parts.reduce((s,p)=>s+p.qty,0);
+  if(!state.parts.length){ $('parts-list').innerHTML='<div class="empty-state"><div class="ei">📐</div><p>Detal qo\'shing</p></div>'; return; }
+  $('parts-list').innerHTML = `<table><thead><tr><th>#</th><th>Nomi</th><th>Eni</th><th>Bo'yi</th><th>Soni</th><th>Krom</th><th></th></tr></thead><tbody>`+
+  state.parts.map((p,i)=>`<tr>
+    <td><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${p.fill};margin-right:6px;vertical-align:middle"></span>${i+1}</td>
+    <td>${p.name}${p.color?`<br><small style="color:var(--muted)">${p.color}</small>`:''}</td>
+    <td>${p.w}mm</td><td>${p.h}mm</td><td>${p.qty}</td>
+    <td>${p.kromSides?p.kromSides+' tom.':'—'}</td>
+    <td><button class="btn btn-danger btn-sm" onclick="removePart('${p.id}')">✕</button></td>
+  </tr>`).join('')+`</tbody></table>`;
+}
+function removePart(id){ state.parts=state.parts.filter(p=>p.id!==id); renderParts(); state.cutResult=null; $('result-area').style.display='none'; $('no-result').style.display='block'; }
+
+// Guillotine packing
+function packSheets(parts, sw, sh, saw){
+  const all = [];
+  parts.forEach(p=>{ for(let i=0;i<p.qty;i++) all.push({...p, _id:Math.random()}); });
+  all.sort((a,b)=>b.w*b.h-a.w*a.h);
+  const sheets = [];
+  for(const part of all){
+    let placed = false;
+    for(const sheet of sheets){ if(tryPlace(sheet,part,sw,sh,saw)){ placed=true; break; } }
+    if(!placed){ const ns={spaces:[{x:0,y:0,w:sw,h:sh}],placed:[]}; tryPlace(ns,part,sw,sh,saw); sheets.push(ns); }
+  }
+  return sheets;
+}
+function tryPlace(sheet, part, sw, sh, saw){
+  const orients=[{w:part.w,h:part.h,rot:false},{w:part.h,h:part.w,rot:true}];
+  for(const o of orients){
+    for(let i=0;i<sheet.spaces.length;i++){
+      const sp=sheet.spaces[i];
+      if(o.w<=sp.w&&o.h<=sp.h){
+        sheet.placed.push({x:sp.x,y:sp.y,w:o.w,h:o.h,name:part.name,fill:part.fill,rot:o.rot,ow:part.w,oh:part.h});
+        const ns=[];
+        if(sp.w-o.w-saw>0) ns.push({x:sp.x+o.w+saw,y:sp.y,w:sp.w-o.w-saw,h:sp.h});
+        if(sp.h-o.h-saw>0) ns.push({x:sp.x,y:sp.y+o.h+saw,w:o.w,h:sp.h-o.h-saw});
+        sheet.spaces.splice(i,1,...ns); return true;
+      }
+    }
+  }
+  return false;
+}
+
+function calculate(){
+  if(!state.parts.length){ notify('Avval detal qo\'shing!','#ef4444'); return; }
+  const sh=getSheet(), saw=getSaw();
+  const bad=state.parts.filter(p=>(p.w>sh.w&&p.h>sh.w)||(p.h>sh.h&&p.w>sh.h));
+  if(bad.length){ notify('"'+bad[0].name+'" varag\'dan katta!','#ef4444'); return; }
+  const sheets=packSheets(state.parts,sh.w,sh.h,saw);
+  const totalParts=state.parts.reduce((s,p)=>s+p.qty,0);
+  const totalArea=state.parts.reduce((s,p)=>s+p.w*p.h*p.qty,0);
+  const sheetArea=sh.w*sh.h*sheets.length;
+  const eff=((totalArea/sheetArea)*100).toFixed(1);
+  state.cutResult={sheets,totalParts,totalArea,sheetArea,eff,sh};
+  state.activeSheet=0;
+  $('r-sheets').textContent=sheets.length+' ta';
+  $('r-eff').textContent=eff+'%';
+  $('r-eff').parentElement.querySelector('.stat-val').style.color=eff>80?'var(--green)':eff>60?'var(--accent)':'var(--red)';
+  renderSheetTabs();
+  renderSheetPrice();
+  $('result-area').style.display='block';
+  $('no-result').style.display='none';
+}
+
+function renderSheetTabs(){
+  const {sheets}=state.cutResult;
+  $('sheet-tabs').innerHTML=sheets.map((_,i)=>`<button class="tab ${i===state.activeSheet?'active':''}" onclick="selectSheet(${i})">Varaq ${i+1}</button>`).join('');
+  renderSheetSVG();
+}
+function selectSheet(i){ state.activeSheet=i; document.querySelectorAll('#sheet-tabs .tab').forEach((t,ti)=>t.classList.toggle('active',ti===i)); renderSheetSVG(); }
+function renderSheetSVG(){
+  const {sheets,sh}=state.cutResult; const s=sheets[state.activeSheet]; if(!s) return;
+  const scale=Math.min(380/sh.w,280/sh.h);
+  const W=Math.round(sh.w*scale), H=Math.round(sh.h*scale);
+  const usedArea=s.placed.reduce((sum,p)=>sum+p.w*p.h,0);
+  const eff=((usedArea/(sh.w*sh.h))*100).toFixed(1);
+  const placedByName={};
+  s.placed.forEach(p=>{ placedByName[p.name]=(placedByName[p.name]||0)+1; });
+  let html=`<div style="font-size:11px;color:var(--muted);margin-bottom:8px">${sh.w}×${sh.h}mm • ${eff}% to'ldirilgan • ${s.placed.length} ta detal</div>`;
+  html+=`<div class="sheet-wrap"><svg width="${W}" height="${H}">`;
+  html+=`<rect width="${W}" height="${H}" fill="#0d0f14" rx="4"/>`;
+  s.placed.forEach(p=>{
+    const x=Math.round(p.x*scale),y=Math.round(p.y*scale),w=Math.round(p.w*scale),h=Math.round(p.h*scale);
+    html+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${p.fill}" fill-opacity="0.75" stroke="${p.fill}" stroke-width="1" rx="2"/>`;
+    if(w>28&&h>18){
+      const fs=Math.min(10,w/6,h/3);
+      html+=`<text x="${x+w/2}" y="${y+h/2}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="${fs}" font-weight="bold" font-family="Sora,sans-serif">${p.rot?p.oh+'×'+p.ow:p.ow+'×'+p.oh}${p.rot?'↻':''}</text>`;
+    }
+  });
+  html+=`</svg></div>`;
+  // placed list
+  html+=`<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px">`;
+  s.placed.forEach(p=>{
+    html+=`<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:4px 10px;font-size:11px">
+      <span style="width:10px;height:10px;border-radius:2px;background:${p.fill};flex-shrink:0"></span>${p.name} ${p.ow}×${p.oh}${p.rot?'<span style="color:var(--accent)">↻</span>':''}
+    </span>`;
+  });
+  html+=`</div>`;
+  $('sheet-visual').innerHTML=html;
+}
+function renderSheetPrice(){
+  const {sheets,totalParts,totalArea,sheetArea,eff}=state.cutResult;
+  const shPrice=+$('sheet-price').value||0;
+  const totalPrice=sheets.length*shPrice;
+  $('result-summary').innerHTML=`
+    <div class="grid2" style="gap:8px">
+      ${row('Jami detallar',totalParts+' ta')}
+      ${row('Kerak varaqlar','<strong style="color:var(--accent)">'+(sheets.length)+' ta</strong>')}
+      ${row('Detallar maydoni',(totalArea/1e6).toFixed(3)+' m²')}
+      ${row('Varaqlar maydoni',(sheetArea/1e6).toFixed(3)+' m²')}
+      ${row('Samaradorlik','<span style="color:'+(eff>80?'var(--green)':eff>60?'var(--accent)':'var(--red)')+'">'+eff+'%</span>')}
+      ${row('Chiqindi',((100-eff)).toFixed(1)+'%')}
+      ${shPrice?row('Varaqlar narxi','<strong style="color:var(--accent)">'+fmtNum(totalPrice)+' so\'m</strong>'):''}
+    </div>
+    <div style="margin-top:12px;padding:12px;background:rgba(240,165,0,.07);border-radius:8px;border:1px solid rgba(240,165,0,.2);font-size:12px;color:var(--muted)">
+      💡 Arra kengligi ${getSaw()}mm hisobga olindi. ↻ belgisi detal burilganini bildiradi.
+    </div>`;
+}
+function row(l,v){ return `<div style="padding:8px 12px;background:rgba(255,255,255,.03);border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:13px"><span style="color:var(--muted)">${l}</span><span>${v}</span></div>`; }
+
+// ===================== KROMKA =====================
+function toggleSide(event){
+  event.preventDefault();
+  const btn = event.target.closest('.side-btn');
+  if(!btn) return;
+  btn.classList.toggle('active');
+  updateKrSides();
+}
+function updateKrSides(){
+  const selected=[];
+  document.querySelectorAll('#kr-sides-selector .side-btn.active').forEach(b=>selected.push(b.dataset.side));
+  $('kr-sides').value=selected.join(',');
+}
+function togglePartSide(event){
+  event.preventDefault();
+  const btn = event.target.closest('.side-btn');
+  if(!btn) return;
+  // Deselect all buttons in this group, then select the clicked one
+  document.querySelectorAll('#part-krom-sides-selector .side-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  $('part-krom-sides').value=btn.dataset.sides;
+}
+function calculateKromaLen(w,h,sides){
+  if(!sides) return 0;
+  const sideArr=sides.split(',').filter(s=>s);
+  let len=0;
+  sideArr.forEach(s=>{
+    if(s==='top'||s==='bottom') len+=w;
+    else if(s==='left'||s==='right') len+=h;
+  });
+  return len;
+}
+function addKromka(){
+  const name=$('kr-name').value.trim(), w=+$('kr-w').value, h=+$('kr-h').value, qty=+$('kr-qty').value||1;
+  if(!name||!w||!h){ notify('Ma\'lumotlarni to\'liq kiriting!','#ef4444'); return; }
+  const sides=$('kr-sides').value;
+  if(!sides){ notify('Kromka tomonlarini tanlang!','#ef4444'); return; }
+  const len=calculateKromaLen(w,h,sides);
+  const totalLen=len*qty/1000; // meters
+  state.kromkas.push({ id:uid(), name, type:$('kr-type').value||'PVC', w, h, qty, sides, len, totalLen, pricePerM:+$('kr-price').value||3000, color:$('kr-color').value });
+  ['kr-name','kr-type','kr-w','kr-h'].forEach(id=>$(id).value='');
+  $('kr-qty').value=1;
+  $('kr-sides').value='';
+  document.querySelectorAll('#kr-sides-selector .side-btn').forEach(b=>b.classList.remove('active'));
+  renderKromka();
+}
+function renderKromka(){
+  const getSidesLabel = (sides) => {
+    if(!sides) return '—';
+    const sideArr=sides.split(',').filter(s=>s);
+    const sideNames={top:'Yuqori',bottom:'Pastki',left:'Chap',right:'O\'ng'};
+    if(sideArr.length===4) return '4 tomon (Hamma)';
+    if(sideArr.length===3) return '3 tomon';
+    return sideArr.map(s=>sideNames[s]).join('+');
+  };
+  if(!state.kromkas.length){ $('kr-table').innerHTML=''; $('kr-empty').style.display='block'; $('kr-result').innerHTML='<div class="empty-state"><div class="ei">📏</div><p>Detallar qo\'shing</p></div>'; return; }
+  $('kr-empty').style.display='none';
+  $('kr-table').innerHTML=state.kromkas.map(k=>`<tr>
+    <td><span class="krom-dot" style="background:${k.color}"></span></td>
+    <td>${k.name}</td><td>${k.type}</td><td>${k.w}×${k.h}</td><td>${k.qty}</td>
+    <td>${getSidesLabel(k.sides)}</td>
+    <td>${k.totalLen.toFixed(2)} m</td>
+    <td>${fmtNum(Math.round(k.totalLen*k.pricePerM))} so'm</td>
+    <td><button class="btn btn-danger btn-sm" onclick="removeKromka('${k.id}')">✕</button></td>
+  </tr>`).join('');
+  // Group by color/type
+  const groups={};
+  state.kromkas.forEach(k=>{ const key=k.color+k.type; if(!groups[key]) groups[key]={color:k.color,type:k.type,len:0,price:0}; groups[key].len+=k.totalLen; groups[key].price+=k.totalLen*k.pricePerM; });
+  const totalLen=state.kromkas.reduce((s,k)=>s+k.totalLen,0);
+  const totalPrice=state.kromkas.reduce((s,k)=>s+k.totalLen*k.pricePerM,0);
+  $('kr-result').innerHTML=`
+    <div style="margin-bottom:12px">
+      ${Object.values(groups).map(g=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:6px;font-size:13px">
+        <span class="krom-dot" style="background:${g.color};width:16px;height:16px"></span>
+        <span style="flex:1">${g.type}</span>
+        <span style="color:var(--muted)">${g.len.toFixed(2)} m</span>
+        <span style="color:var(--accent)">${fmtNum(Math.round(g.price))} so'm</span>
+      </div>`).join('')}
+    </div>
+    <div style="padding:12px;background:rgba(240,165,0,.1);border-radius:10px;border:1px solid rgba(240,165,0,.2)">
+      <div style="font-size:13px;margin-bottom:4px">Jami: <strong>${totalLen.toFixed(2)} metr</strong></div>
+      <div style="font-size:15px;font-weight:800;color:var(--accent)">${fmtNum(Math.round(totalPrice))} so'm</div>
+    </div>`;
+}
+function removeKromka(id){ state.kromkas=state.kromkas.filter(k=>k.id!==id); renderKromka(); }
+
+// ===================== PRICE =====================
+function addMaterialRow(){
+  const d=$('pr-materials');
+  const r=document.createElement('div');
+  r.className='form-row cols3';r.style.marginBottom='8px';
+  r.innerHTML=`<div><label>Material nomi</label><input class="pr-mat-name" placeholder="Material"/></div>
+    <div><label>Miqdor</label><input class="pr-mat-qty" type="number" value="1"/></div>
+    <div><label>Narxi (so'm)</label><input class="pr-mat-price" type="number" placeholder="0"/></div>`;
+  d.appendChild(r);
+}
+function addWorkRow(){
+  const d=$('pr-works');
+  const r=document.createElement('div');
+  r.className='form-row cols3';r.style.marginBottom='8px';
+  r.innerHTML=`<div><label>Ish turi</label><input class="pr-work-name" placeholder="Ish"/></div>
+    <div><label>Soat</label><input class="pr-work-hours" type="number" value="1"/></div>
+    <div><label>Soat narxi (so'm)</label><input class="pr-work-rate" type="number" placeholder="0"/></div>`;
+  d.appendChild(r);
+}
+function calcPrice(){
+  const project=$('pr-project').value||'Loyiha';
+  const mats=[...document.querySelectorAll('.pr-mat-name')].map((n,i)=>({
+    name:n.value,qty:+document.querySelectorAll('.pr-mat-qty')[i]?.value||0,
+    price:+document.querySelectorAll('.pr-mat-price')[i]?.value||0
+  })).filter(m=>m.name);
+  const works=[...document.querySelectorAll('.pr-work-name')].map((n,i)=>({
+    name:n.value,hours:+document.querySelectorAll('.pr-work-hours')[i]?.value||0,
+    rate:+document.querySelectorAll('.pr-work-rate')[i]?.value||0
+  })).filter(w=>w.name);
+  const extra=+$('pr-extra').value||0;
+  const margin=+$('pr-margin').value||0;
+  const matTotal=mats.reduce((s,m)=>s+m.qty*m.price,0);
+  const workTotal=works.reduce((s,w)=>s+w.hours*w.rate,0);
+  const cost=matTotal+workTotal+extra;
+  const profit=cost*margin/100;
+  const final=cost+profit;
+  $('price-no-result').style.display='none';
+  $('price-result-card').style.display='block';
+  $('price-result').innerHTML=`
+    <div style="font-size:15px;font-weight:700;margin-bottom:12px">${project} — ${$('pr-client').value||'Mijoz'}</div>
+    <div style="margin-bottom:8px"><strong style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Materiallar</strong></div>
+    ${mats.map(m=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)"><span>${m.name} × ${m.qty}</span><span>${fmtNum(m.qty*m.price)} so'm</span></div>`).join('')}
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);color:var(--muted)"><span>Materiallar jami</span><span>${fmtNum(matTotal)} so'm</span></div>
+    <div style="margin:10px 0 8px"><strong style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Ishchi kuchi</strong></div>
+    ${works.map(w=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)"><span>${w.name} (${w.hours}h)</span><span>${fmtNum(w.hours*w.rate)} so'm</span></div>`).join('')}
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);color:var(--muted)"><span>Ishchi kuchi jami</span><span>${fmtNum(workTotal)} so'm</span></div>
+    ${extra?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);color:var(--muted)"><span>Qo'shimcha xarajat</span><span>${fmtNum(extra)} so'm</span></div>`:''}
+    <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding:10px 0;border-bottom:2px solid var(--border)"><span>Tannarx</span><span>${fmtNum(cost)} so'm</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;color:var(--green)"><span>Foyda (${margin}%)</span><span>+ ${fmtNum(Math.round(profit))} so'm</span></div>
+    <div style="padding:14px;background:rgba(240,165,0,.12);border-radius:10px;border:1px solid rgba(240,165,0,.3);margin-top:8px;text-align:center">
+      <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Yakuniy Narx</div>
+      <div style="font-size:28px;font-weight:800;color:var(--accent)">${fmtNum(Math.round(final))} so'm</div>
+    </div>`;
+  notify('✅ Narx hisoblandi!');
+}
+
+// ===================== FITINGS =====================
+function addFiting(){
+  const name=$('fit-name').value.trim();
+  if(!name){ notify('Furnitura nomini kiriting!','#ef4444'); return; }
+  state.fitings.push({ id:uid(), name, type:$('fit-type').value, qty:+$('fit-qty').value||1, price:+$('fit-price').value||0, brand:$('fit-brand').value, note:$('fit-note').value });
+  ['fit-name','fit-price','fit-brand','fit-note'].forEach(id=>$(id).value='');
+  $('fit-qty').value=1;
+  renderFitings();
+}
+function renderFitings(){
+  if(!state.fitings.length){ $('fit-table').innerHTML=''; $('fit-empty').style.display='block'; $('fit-summary').innerHTML='<div class="empty-state"><div class="ei">🔩</div><p>Furnitura qo\'shing</p></div>'; return; }
+  $('fit-empty').style.display='none';
+  $('fit-table').innerHTML=state.fitings.map((f,i)=>`<tr>
+    <td>${i+1}</td><td>${f.name}</td><td><span class="tag tag-blue">${f.type}</span></td>
+    <td>${f.brand||'—'}</td><td>${f.qty}</td><td>${fmtNum(f.price)}</td>
+    <td><strong>${fmtNum(f.qty*f.price)}</strong></td><td>${f.note||'—'}</td>
+    <td><button class="btn btn-danger btn-sm" onclick="removeFiting('${f.id}')">✕</button></td>
+  </tr>`).join('');
+  const total=state.fitings.reduce((s,f)=>s+f.qty*f.price,0);
+  const groups={};
+  state.fitings.forEach(f=>{ if(!groups[f.type]) groups[f.type]={qty:0,price:0}; groups[f.type].qty+=f.qty; groups[f.type].price+=f.qty*f.price; });
+  $('fit-summary').innerHTML=Object.entries(groups).map(([t,g])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:6px;font-size:13px">
+    <span>${t}</span><span style="color:var(--muted)">${g.qty} ta</span><span style="color:var(--accent)">${fmtNum(g.price)} so'm</span>
+  </div>`).join('')+`<div style="padding:12px;background:rgba(240,165,0,.1);border-radius:10px;border:1px solid rgba(240,165,0,.2);margin-top:8px;text-align:center"><div style="font-size:12px;color:var(--muted)">Jami furnitura narxi</div><div style="font-size:20px;font-weight:800;color:var(--accent)">${fmtNum(total)} so'm</div></div>`;
+}
+function removeFiting(id){ state.fitings=state.fitings.filter(f=>f.id!==id); renderFitings(); }
+
+// ===================== MATERIALS =====================
+function addMaterial(){
+  const name=$('mat-name').value.trim();
+  if(!name){ notify('Material nomini kiriting!','#ef4444'); return; }
+  state.materials.push({ id:uid(), name, type:$('mat-type').value, qty:+$('mat-qty').value||0, unit:$('mat-unit').value, price:+$('mat-price').value||0, min:+$('mat-min').value||0, supplier:$('mat-supplier').value });
+  ['mat-name','mat-price','mat-supplier'].forEach(id=>$(id).value='');
+  $('mat-qty').value=10;
+  renderMaterials(); persist();
+}
+function renderMaterials(){
+  if(!state.materials.length){ $('mat-table').innerHTML=''; $('mat-empty').style.display='block'; $('mat-summary').innerHTML='<div class="empty-state"><div class="ei">📦</div><p>Material qo\'shing</p></div>'; return; }
+  $('mat-empty').style.display='none';
+  $('mat-table').innerHTML=state.materials.map((m,i)=>{
+    const low=m.qty<=m.min;
+    return `<tr>
+      <td>${i+1}</td><td>${m.name}</td><td><span class="tag tag-blue">${m.type}</span></td>
+      <td><strong style="color:${low?'var(--red)':'var(--text)'}">${m.qty}</strong></td>
+      <td>${m.unit}</td><td>${fmtNum(m.price)}</td>
+      <td>${fmtNum(m.qty*m.price)}</td>
+      <td>${low?'<span class="tag tag-red">⚠️ Kam</span>':'<span class="tag tag-green">✅ Yetarli</span>'}</td>
+      <td>${m.supplier||'—'}</td>
+      <td>
+        <button class="btn btn-sm btn-secondary" onclick="changeMatQty('${m.id}',1)">+</button>
+        <button class="btn btn-sm btn-secondary" onclick="changeMatQty('${m.id}',-1)">−</button>
+        <button class="btn btn-danger btn-sm" onclick="removeMaterial('${m.id}')">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+  const total=state.materials.reduce((s,m)=>s+m.qty*m.price,0);
+  const low=state.materials.filter(m=>m.qty<=m.min);
+  $('mat-summary').innerHTML=`
+    <div style="display:grid;gap:8px">
+      ${row('Jami material turlari',state.materials.length+' ta')}
+      ${row('Jami ombor qiymati','<strong style="color:var(--accent)">'+(fmtNum(total))+' so\'m</strong>')}
+      ${low.length?`<div style="padding:10px 12px;background:rgba(239,68,68,.1);border-radius:8px;border:1px solid rgba(239,68,68,.2);font-size:12px;color:var(--red)">⚠️ ${low.length} ta material kam: ${low.map(m=>m.name).join(', ')}</div>`:'<div style="padding:10px 12px;background:rgba(34,197,94,.08);border-radius:8px;font-size:12px;color:var(--green)">✅ Barcha materiallar yetarli</div>'}
+    </div>`;
+}
+function changeMatQty(id, delta){ const m=state.materials.find(x=>x.id===id); if(m){ m.qty=Math.max(0,m.qty+delta); renderMaterials(); persist(); } }
+function removeMaterial(id){ if(confirm('O\'chirilsinmi?')){ state.materials=state.materials.filter(m=>m.id!==id); renderMaterials(); persist(); } }
+
+// ===================== CLIENTS =====================
+function addClient(){
+  const name=$('cl-name').value.trim();
+  if(!name){ notify('Mijoz nomini kiriting!','#ef4444'); return; }
+  state.clients.push({ id:uid(), name, phone:$('cl-phone').value, addr:$('cl-addr').value, note:$('cl-note').value, date:today() });
+  ['cl-name','cl-phone','cl-addr','cl-note'].forEach(id=>$(id).value='');
+  renderClients(); persist(); notify('✅ Mijoz qo\'shildi!');
+}
+function renderClients(){
+  if(!state.clients.length){ $('clients-table').innerHTML=''; $('cl-empty').style.display='block'; return; }
+  $('cl-empty').style.display='none';
+  $('clients-table').innerHTML=state.clients.map((c,i)=>{
+    const orders=state.orders.filter(o=>o.client===c.name).length;
+    return `<tr>
+      <td>${i+1}</td><td><strong>${c.name}</strong></td><td>${c.phone||'—'}</td>
+      <td>${c.addr||'—'}</td><td>${orders?'<span class="tag tag-orange">'+orders+' ta</span>':'0'}</td>
+      <td>${c.note||'—'}</td><td>${c.date}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="removeClient('${c.id}')">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+function removeClient(id){ if(confirm('O\'chirilsinmi?')){ state.clients=state.clients.filter(c=>c.id!==id); renderClients(); persist(); notify('🗑️ O\'chirildi','#ef4444'); } }
+
+// ===================== DASHBOARD =====================
+function updateDashboard(){
+  $('dash-orders').textContent=state.orders.length;
+  $('dash-done').textContent=state.orders.filter(o=>o.status==='yetkazildi'||o.status==='tayyor').length;
+  $('dash-clients').textContent=state.clients.length;
+  const rev=state.orders.filter(o=>o.status==='yetkazildi').reduce((s,o)=>s+o.price,0);
+  $('dash-revenue').textContent=rev?fmtNum(rev):'0';
+  // recent orders
+  const recent=state.orders.slice(-5).reverse();
+  const statusMap={yangi:'<span class="tag tag-blue">Yangi</span>',jarayonda:'<span class="tag tag-orange">Jarayonda</span>',tayyor:'<span class="tag tag-green">Tayyor</span>',yetkazildi:'<span class="tag tag-green">Yetkazildi</span>'};
+  $('dash-orders-table').innerHTML=recent.length?recent.map(o=>`<tr><td>${o.num}</td><td>${o.client}</td><td>${statusMap[o.status]}</td><td>${fmtNum(o.price)} so'm</td></tr>`).join(''):'<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">Buyurtma yo\'q</td></tr>';
+  // materials
+  if(state.materials.length){
+    $('dash-materials').innerHTML=state.materials.slice(0,5).map(m=>{
+      const pct=m.min>0?Math.min(100,m.qty/Math.max(m.min*3,1)*100):50;
+      return `<div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>${m.name}</span><span style="color:var(--muted)">${m.qty} ${m.unit}</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${m.qty<=m.min?'var(--red)':''}"></div></div>
+      </div>`;
+    }).join('');
+  } else { $('dash-materials').innerHTML='<div class="empty-state"><div class="ei">📦</div><p>Material qo\'shing</p></div>'; }
+}
+
+// ===================== REPORTS =====================
+function updateReports(){
+  $('rep-revenue').textContent=fmtNum(state.orders.filter(o=>o.status==='yetkazildi').reduce((s,o)=>s+o.price,0));
+  $('rep-orders').textContent=state.orders.length;
+  $('rep-clients').textContent=state.clients.length;
+  const statusCount={yangi:0,jarayonda:0,tayyor:0,yetkazildi:0};
+  state.orders.forEach(o=>statusCount[o.status]=(statusCount[o.status]||0)+1);
+  const statusLabel={yangi:'🔵 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'🟢 Tayyor',yetkazildi:'✅ Yetkazildi'};
+  $('rep-status-chart').innerHTML=Object.entries(statusCount).map(([s,c])=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <span style="width:80px;font-size:12px">${statusLabel[s]}</span>
+    <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${state.orders.length?c/state.orders.length*100:0}%"></div></div>
+    <span style="font-size:13px;font-weight:700;width:30px;text-align:right">${c}</span>
+  </div>`).join('')||'<div class="empty-state"><div class="ei">📊</div><p>Buyurtma yo\'q</p></div>';
+  const stockTotal=state.materials.reduce((s,m)=>s+m.qty*m.price,0);
+  $('rep-stock').innerHTML=state.materials.length?`
+    ${state.materials.map(m=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)"><span>${m.name}</span><span>${m.qty} ${m.unit} — ${fmtNum(m.qty*m.price)} so'm</span></div>`).join('')}
+    <div style="padding:10px;background:rgba(240,165,0,.1);border-radius:8px;border:1px solid rgba(240,165,0,.2);margin-top:10px;text-align:center"><strong style="color:var(--accent)">Jami: ${fmtNum(stockTotal)} so'm</strong></div>`
+    :'<div class="empty-state"><div class="ei">📦</div><p>Material qo\'shing</p></div>';
+}
+
+// ===================== EXPORT / IMPORT =====================
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mebelpro-backup.json'; a.click();
+  notify('✅ Ma\'lumotlar saqlandi!');
+}
+function importData(){ $('import-file').click(); }
+function doImport(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const d = JSON.parse(ev.target.result);
+      Object.assign(state, d);
+      if(!state.settings) state.settings = {adminPass:'admin123',sysName:'MebelPro',autoApprove:false};
+      persist(); renderAll();
+      if(state.currentRole) updateRolePages();
+      notify('✅ Ma\'lumotlar yuklandi!');
+    }catch{ notify('❌ Fayl noto\'g\'ri!','#ef4444'); }
+  };
+  reader.readAsText(file); e.target.value='';
+}
+function updateRolePages(){
+  if(state.currentRole==='seller'){ updateSellerDashboard(); renderSellerProducts(); renderSellerOrders(); }
+  if(state.currentRole==='buyer'){ renderCatalog(); renderCart(); renderBuyerOrders(); }
+  if(state.currentRole==='admin'){ updateAdminDashboard(); renderAdminProducts(); renderAdminUsers(); renderAdminOrders(); }
+}
+function renderAll(){ renderOrders(); renderKromka(); renderFitings(); renderMaterials(); renderClients(); updateDashboard(); updateRolePages(); }
+function exportCSV(){
+  if(!state.orders.length){ notify('Buyurtma yo\'q!','#ef4444'); return; }
+  const rows=[['Raqam','Mijoz','Telefon','Mahsulot','Narx','Holat','Sana'],...state.orders.map(o=>[o.num,o.client,o.phone,o.name,o.price,o.status,o.date])];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='buyurtmalar.csv'; a.click();
+  notify('✅ CSV yuklandi!');
+}
+function printReport(){ window.print(); }
+
+// ===================== SHEET PRESET =====================
+$('sheet-w').value=2750; $('sheet-h').value=1830;
+$('sheet-preset').addEventListener('change',applySheetPreset);
+
+// Init side button defaults
+document.querySelector('#kr-sides-selector .side-btn[data-side="top"]')?.classList.add('active');
+$('kr-sides').value='top';
+document.querySelector('#part-krom-sides-selector .side-btn[data-sides="0"]')?.classList.add('active');
+$('part-krom-sides').value='0';
+
+// Init
+loadState();
+if(!state.settings) state.settings = {adminPass:'admin123',sysName:'MebelPro',autoApprove:false};
+if(!state.products) state.products = [];
+if(!state.buyerOrders) state.buyerOrders = [];
+if(!state.sellers) state.sellers = [];
+if(!state.buyers) state.buyers = [];
+if(!state.users) state.users = [];
+
+// Restore session if logged in
+if(state.currentRole && state.currentUser){
+  $('role-screen').style.display = 'none';
+  $('app').classList.add('active');
+  buildNav();
+  updateUserInfo();
+  const nav = NAV_CONFIG[state.currentRole];
+  if(nav) showPage(nav[0].items[0].id);
+} else {
+  $('role-screen').style.display = 'flex';
+}
+
+renderAll();
+updateDashboard();
+</script>
+</body>
+</html>
